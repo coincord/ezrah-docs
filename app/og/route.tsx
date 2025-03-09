@@ -2,13 +2,13 @@
 // import { NextraLogo } from "@components/icons";
 import Image from "next/image";
 import { ImageResponse } from "next/og";
-
-export const runtime = "edge";
-
-// eslint-disable-next-line unicorn/prefer-top-level-await -- this will break og image
-const font = fetch(new URL("Inter-SemiBold.otf", __dirname)).then((res) =>
-  res.arrayBuffer(),
-);
+import { readFileSync } from "fs";
+import { join } from "path";
+const fontPath = join(process.cwd(), "app/og/Inter-SemiBold.otf");
+const font = readFileSync(fontPath); // eslint-disable-next-line unicorn/prefer-top-level-await -- this will break og image
+// const font = fetch(new URL("Inter-SemiBold.otf", import.meta.url)).then((res) =>
+//   res.arrayBuffer(),
+// );
 
 export async function GET(req: Request): Promise<Response> {
   try {
