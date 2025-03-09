@@ -1,0 +1,80 @@
+/* @tailwind utilities; */
+
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=League+Spartan:wght@100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
+
+@import url("https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&display=swap");
+@import "tailwindcss";
+/* @tailwind base; */
+/* @tailwind components; */
+@tailwind utilities;
+@import "nextra-theme-docs/style.css";
+
+@variant dark (&:where(.dark *));
+
+@theme {
+  --text-sm: 0.625rem;
+  --text-base: 1.25rem;
+  /* --default-font-family: "League Spartan" */
+  /*   --text-tiny--line-height: 1.5rem;  */
+  /*   --text-tiny--letter-spacing: 0.125rem;  */
+  /*   --text-tiny--font-weight: 500;  */
+}
+
+/* *{ */
+/*   font-family: "Lato", sans-serif; */
+/* } */
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Fraunces";
+  padding-bottom: 25px;
+}
+
+html {
+  /* @apply text-body; */
+}
+
+body {
+  font-feature-settings:
+    "rlig" 1,
+    "calt" 1;
+}
+
+.home-content p {
+  margin-top: 1.5em;
+  line-height: 1.75em;
+}
+
+code.text-\[\.9em\] {
+  font-size: 14px;
+}
+
+@media screen and (max-width: 1200px) {
+  .home-content .hide-medium {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 720px) {
+  .home-content p {
+    font-size: 0.9rem;
+  }
+
+  .home-content .hide-small {
+    display: none;
+  }
+}
+
+/* Apply monospace font to code blocks */
+/* code, */
+/* pre { */
+/*   font-family: */
+/*     "Fira Code", "JetBrains Mono", "Source Code Pro", monospace !important; */
+/*   /* font-size: 14px; */
+/* } */
+
+/* Improve block code styling */

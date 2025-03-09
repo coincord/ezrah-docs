@@ -1,0 +1,72 @@
+---
+description:
+  Ezrah is a blockchain infrastructure company dedicated to bridging the gap between Web3 and 
+  traditional industries. By seamlessly integrating blockchain technology into real-world 
+  applications, we drive innovation, unlock new possibilities, and create transformative solutions 
+  with the potential for global impact.
+---
+
+import { Cards, Image } from 'nextra/components'
+import { cloneElement } from 'react'
+
+export default function MdxLayout(props) {
+  return cloneElement(props.children, {
+    components: {
+      img: Image
+    }
+  })
+}
+
+# Introduction
+
+**Ezrah** is a blockchain infrastructure company dedicated to bridging the gap between Web3 and 
+traditional industries. By seamlessly integrating blockchain technology into real-world 
+applications, we drive innovation, unlock new possibilities, and create transformative solutions 
+with the potential for global impact.
+
+
+## Product Suite
+
+To take a deeper look, select a section:
+
+<Cards num={2}>
+  <Cards.Card arrow title="Ezrah Creds" href="/docs/creds">
+  </Cards.Card>
+  <Cards.Card arrow title="Ezrah Vaults" href="/docs/ezrah_vaults">
+  </Cards.Card>
+</Cards>
+
+
+## FAQ
+
+The Nextra FAQ is a collection of useful questions and answers about the
+project. If you have a question that isn't answered here, please
+[open a discussion](https://github.com/shuding/nextra/discussions).
+
+<details>
+  {/* prettier-ignore */}
+  <summary>Can I use Nextra with Next.js `pages` router?</summary>
+Nextra 4 only works with the `app` router. Only Nextra 1/2/3 supports the
+`pages` router.
+
+</details>
+
+<details>
+  <summary>Can I use X with Nextra?</summary>
+The answer is "yes" for most things. Since Nextra is just a Next.js plugin, almost all the things
+that can be done with React can be done with Nextra. Here are some examples and guides:
+
+- [Use Tailwind CSS](/docs/guide/tailwind-css)
+- [Use custom CSS and Sass](/docs/guide/custom-css)
+- [Use custom fonts](https://nextjs.org/docs/basic-features/font-optimization)
+
+</details>
+
+<details>
+  {/* prettier-ignore */}
+  <summary>How can I add a live coding component in Nextra?</summary>
+There are libraries like [Sandpack](https://sandpack.codesandbox.io) and
+[react-live](https://github.com/FormidableLabs/react-live) that can help you
+add live coding components to your MDX.
+
+</details>
