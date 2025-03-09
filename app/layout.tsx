@@ -2,14 +2,42 @@ import { Footer, Layout, Navbar } from "nextra-theme-docs";
 import Image from "next/image";
 import { Banner, Head } from "nextra/components";
 import { getPageMap } from "nextra/page-map";
+import type { Metadata } from "next";
 import "./global.css";
 // import "nextra-theme-docs/style.css";
 
-export const metadata = {
-  // Define your metadata here
-  // For more information on metadata API, see: https://nextjs.org/docs/app/building-your-application/optimizing/metadata
+export const metadata: Metadata = {
+  description: "Reusabled Credentials for Verified IDs",
+  metadataBase: new URL("https://docs.ezrah.co"),
+  keywords: ["VC", "Verifiable Credential", "Decentralized ID"],
+  generator: "Next.js",
+  applicationName: "Ezrah",
+  appleWebApp: {
+    title: "Ezrah Portal",
+  },
+  title: {
+    default:
+      "Ezrah – Credential and Identity infrastructure for the digital age",
+    template: "%s | Ezrah",
+  },
+  openGraph: {
+    // https://github.com/vercel/next.js/discussions/50189#discussioncomment-10826632
+    url: "./",
+    siteName: "Ezrah",
+    locale: "en_US",
+    type: "website",
+  },
+  other: {
+    "msapplication-TileColor": "#fff",
+  },
+  twitter: {
+    site: "https://docs.ezrah.co",
+  },
+  alternates: {
+    // https://github.com/vercel/next.js/discussions/50189#discussioncomment-10826632
+    canonical: "./",
+  },
 };
-
 const banner = <Banner storageKey="some-key">Nextra 4.0 is released 🎉</Banner>;
 const navbar = (
   <Navbar
@@ -19,6 +47,7 @@ const navbar = (
           src="/img/ezrah-logo-white.png"
           width={50}
           height={50}
+          alt="Logo"
           className="px-2"
         />
         <b className="text-2xl">Ezrah Labs</b>
