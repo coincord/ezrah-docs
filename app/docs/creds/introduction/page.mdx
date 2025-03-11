@@ -30,113 +30,130 @@ Ezrah is building a **blockchain-powered identity infrastructure** that provides
 
 ---
 
-## The Problem with Traditional Identity Systems  
+## Components of Decentralized Identity
 
-Most identity models today rely on **centralized databases** controlled by governments, banks, social networks, or enterprises. This structure leads to several **critical issues**:
+Decentralized identity (DID) is an identity framework that enables individuals and organizations to have self-sovereign control over their digital identities without relying on centralized authorities. The three major components of a decentralized identity system are as follows:
 
-### Lack of User Control
-- Users depend on third-party platforms to create and manage identities (e.g., Google, Facebook, government agencies).  
-- Accounts can be **revoked, suspended, or hacked** without the user’s consent.  
-- No **cross-platform portability**—a Facebook ID cannot be used on LinkedIn or a banking app.
+### 1. **Issuers**
+Issuers are entities that create and sign Verifiable Credentials (VCs). These credentials contain claims about an identity, such as a university issuing a diploma or a government agency issuing a driver's license.
 
-### Privacy Risks & Data Exploitation
-- Companies **collect and monetize user data**, often without transparent consent.  
-- Centralized identity providers store vast amounts of **personal information**, making them prime targets for cyberattacks.  
-- **Mass surveillance & tracking** erode individual privacy rights.
+#### Responsibilities:
+- **Credential Creation**: Generates digital credentials that represent verified claims.
+- **Signing and Encryption**: Uses cryptographic keys to sign credentials, ensuring authenticity and integrity.
+- **Revocation Management**: Maintains mechanisms to revoke credentials if needed.
 
-### Security Vulnerabilities & Identity Theft
-- **Data breaches** expose millions of identities every year.  
-- **Phishing attacks** exploit weak authentication mechanisms.  
-- Fraudsters can easily **fake or steal identities** due to weak verification processes.
+#### Examples:
+- Government institutions issuing passports.
+- Universities providing diplomas.
+- Banks issuing financial credentials.
 
-### Compliance & Regulatory Challenges
-- KYC (Know Your Customer) & AML (Anti-Money Laundering) regulations require businesses to verify identities, leading to **costly and fragmented compliance processes**.  
-- Companies must **store user data**, increasing **legal risks** under GDPR, CCPA, and other regulations.
+### 2. **Holders**
+Holders are individuals or entities that receive, store, and manage Verifiable Credentials. They control their digital identity and decide how and when to share their credentials.
+
+#### Responsibilities:
+- **Credential Storage**: Uses digital identity wallets to securely store credentials.
+- **Selective Disclosure**: Chooses what information to share with verifiers.
+- **Authentication**: Proves control over credentials when interacting with verifiers.
+
+#### Examples:
+- A job applicant presenting a diploma to a potential employer.
+- A traveler proving identity using a digital passport.
+- A customer verifying age for online services without revealing their birth date.
+
+### 3. **Verifiers**
+Verifiers are entities that request, validate, and rely on Verifiable Credentials to make trust-based decisions. They use cryptographic methods to confirm the credentials’ authenticity without needing to contact the issuer directly.
+
+#### Responsibilities:
+- **Credential Verification**: Checks if credentials are valid and issued by a trusted authority.
+- **Authentication & Trust**: Ensures the credential holder is the rightful owner.
+- **Privacy-Preserving Verification**: Uses techniques like Zero-Knowledge Proofs to verify claims without exposing unnecessary information.
+
+#### Examples:
+- Employers verifying educational credentials.
+- Financial institutions conducting KYC checks.
+- Online platforms validating identity for account access.
 
 ---
 
-## **What is Decentralized Identity?**  
 
-Decentralized Identity (**DID**) is a **trustless** and **self-sovereign** identity model that removes the need for centralized authorities.  
+## Technical Building Blocks of Decentralized Identity
 
-### **Core Principles of Decentralized Identity**  
-**Self-Sovereignty** – Individuals **own and control** their identities.  
-**Interoperability** – IDs can be used across different platforms and ecosystems.  
-**Privacy-Preserving** – Minimal personal data exposure using **zero-knowledge proofs (ZKPs)**.  
-**Security & Verifiability** – Identities are **tamper-proof and cryptographically secured**.  
+Decentralized identity (DID) systems rely on key technical components to ensure security, privacy, and interoperability. The two primary building blocks are **Decentralized Identifiers (DIDs)** and **Verifiable Credentials (VCs)**.
 
-### **How It Works (Technical Breakdown)**  
+### 1. **Decentralized Identifiers (DIDs)**
+DIDs are globally unique, cryptographically verifiable identifiers that do not rely on centralized authorities. They enable self-sovereign identity by allowing individuals and organizations to create and control their identifiers.
 
-1️⃣ **Decentralized Identifiers (DIDs)**  
-A **DID** is a **unique, cryptographic identifier** stored on a blockchain. Unlike traditional usernames (email, phone number), DIDs are:  
-- **Immutable**: Cannot be changed or revoked by any central authority.  
-- **Verifiable**: Ownership can be proven using cryptographic signatures.  
-- **Interoperable**: Can be used across multiple platforms.  
+#### Key Features:
+- **Decentralization**: DIDs are not tied to a central authority and can be resolved using decentralized networks.
+- **Cryptographic Control**: They are linked to cryptographic key pairs, enabling secure authentication and digital signatures.
+- **Interoperability**: Built on open standards, DIDs work across different platforms and ecosystems.
+- **Privacy-Preserving**: Users can create multiple DIDs to minimize data correlation and tracking.
 
-Example of a **DID URL**:
+#### Example DID Structure:
+```
+did:ezrah:123456789abcdefghi
+```
+This structure includes:
+- `did:` - The scheme identifier.
+- `ezrah:` - The DID method, specifying the underlying registry or blockchain.
+- `123456789abcdefghi` - A unique identifier assigned within the DID method.
+
+#### DID Document:
+A DID resolves to a **DID Document**, which contains metadata such as public keys, service endpoints, and authentication methods. Example JSON-LD structure:
 ```json
-did:ezrah:0x12345abcdef67890
+{
+  "@context": "https://www.w3.org/ns/did/v1",
+  "id": "did:ezrah:123456789abcdefghi",
+  "authentication": [{
+    "id": "#key-1",
+    "type": "Ed25519VerificationKey2020",
+    "controller": "did:ezrah:123456789abcdefghi",
+    "publicKeyMultibase": "z6Mkj..."
+  }]
+}
 ```
 
-## Verifiable Credentials (VCs)
-VCs are digitally signed claims issued by trusted entities. These credentials allow users to prove attributes without revealing unnecessary data.
+### 2. **Verifiable Credentials (VCs)**
+Verifiable Credentials (VCs) are digitally signed statements issued by a trusted entity (Issuer) to a Holder, who can later present them to a Verifier.
 
-📌 Example of a VC JSON Structure:
+#### Key Features:
+- **Tamper-Proof**: Signed cryptographically, ensuring authenticity and preventing forgery.
+- **Privacy-Enhancing**: Enables selective disclosure of credential data.
+- **Decentralized Verification**: Verifiers do not need to contact the issuer to verify credentials.
+- **Revocation Support**: Issuers can revoke VCs when necessary.
 
-``` mdx filename="VC Structure"
+#### VC Structure:
+VCs follow the W3C Verifiable Credentials standard and typically include:
+- **Issuer**: DID of the entity that issued the credential.
+- **Subject**: DID of the entity the credential is about.
+- **Claims**: The verifiable attributes (e.g., name, age, degree).
+- **Proof**: A cryptographic signature proving authenticity.
+
+Example Verifiable Credential JSON:
+```json
 {
-  "id": "12345",
+  "@context": ["https://www.w3.org/2018/credentials/v1"],
+  "id": "http://example.edu/credentials/1872",
+  "type": ["VerifiableCredential", "UniversityDegreeCredential"],
   "issuer": "did:ezrah:issuer123",
-  "subject": "did:ezrah:user567",
   "credentialSubject": {
-    "name": "John Doe",
-    "dateOfBirth": "1995-06-15",
-    "nationality": "US"
+    "id": "did:ezrah:holder456",
+    "degree": {
+      "type": "Bachelor of Science",
+      "name": "Computer Science"
+    }
   },
   "proof": {
-    "type": "EcdsaSecp256k1Signature",
-    "created": "2024-03-09T12:34:56Z",
-    "proofValue": "abcdef123456..."
+    "type": "Ed25519Signature2020",
+    "created": "2023-03-10T04:40:00Z",
+    "proofPurpose": "assertionMethod",
+    "verificationMethod": "did:ezrah:issuer123#key-1",
+    "proofValue": "z5M3..."
   }
 }
 ```
 
-## Blockchain-Based Registry
-Instead of storing identity credentials on centralized servers, DID documents are anchored on a blockchain, ensuring tamper-proof verification.
+### Conclusion
+DIDs and VCs form the backbone of decentralized identity systems, enabling users to have greater control over their identity while maintaining security and privacy. These technical components provide a foundation for trustless and verifiable digital interactions across various industries.
 
-## How Ezrah Enables Decentralized Identity
-At Ezrah, we are building an end-to-end decentralized identity infrastructure that enables individuals and businesses to adopt self-sovereign identity in a seamless and scalable way.
-
-### Key Offerings by Ezrah
-#### Feature	Description
-Ezrah Creds	A decentralized identity vault for managing credentials.
-DID Registry	A blockchain-based registry for resolving and verifying DIDs.
-Verifiable Credentials (VCs)	Digitally signed credentials that are tamper-proof and easy to verify.
-Ezrah API Suite	APIs for integrating decentralized identity into applications.
-
-
-### Real-World Applications of Decentralized Identity
-#### KYC & Financial Services
-Users can share verified identity credentials without exposing full personal data.
-Banks can verify identities without storing customer data, reducing compliance risks.
-
-#### Web3 & Digital Wallets
-DID-powered wallets allow secure authentication & access control.
-Users can store credentials on-chain without relying on Google/Facebook logins.
-
-#### Healthcare & Medical Records
-Patients control their medical data and selectively share it with doctors.
-Reduces fraud & identity theft in insurance claims.
-
-#### Supply Chain & Logistics
-Verifiable Credentials ensure authenticity of suppliers, goods, and transactions.
-Prevents fraud and counterfeiting.
-
-
-## How to Integrate Ezrah’s DID Solutions
-Generate a DID
-Using Ezrah’s API, you can create a Decentralized Identifier for your application:
-
-## The Future of Decentralized Identity
-Decentralized identity is at the core of Web3, digital sovereignty, and trustless authentication. Ezrah is committed to pushing the boundaries by enhancing security, interoperability, and adoption across industries.
 
