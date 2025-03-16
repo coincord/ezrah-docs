@@ -1,0 +1,103 @@
+---
+title: "OOB Links"
+description: "Credential widgets and flows"
+---
+
+# OOB Links
+
+## Overview
+
+Out-of-Band (OOB) Links facilitate secure DID (Decentralized Identifier) communication between different entities within the Ezrah ecosystem. These links enable seamless interactions for credential verification, issuance, and authentication without requiring prior connections between participants.
+
+## Purpose of OOB Links
+
+OOB Links serve multiple purposes within Ezrah:
+
+- **Credential Verification:** Enables verifiers to request credential proofs from holders.
+- **Credential Issuance:** Allows issuers to send credentials directly to holders.
+- **DID Authentication:** Establishes trusted communication channels between different parties.
+- **Cross-Protocol Interoperability:** Ensures compatibility with various DID-based protocols.
+
+## Ezrah OOB Link Structure
+
+OOB Links in Ezrah follow a structured format encoded as a URL that initiates DIDComm-based interactions.
+
+### Example Ezrah OOB Link:
+
+```
+https://widget.ezrah.co/oob?_oob=eyJ0eXBlIjoiaHR0cHM6Ly9kaWRjb21tLm9yZy9vdXQtb2YtYmFuZC8yLjAvaW52aXRhdGlvbiIsImlkIjoiNjg4NmNhOGEtODc0Yi00ZGRhLWJ.....
+```
+
+### Components of the OOB Link:
+
+- **Base URL:** `https://widget.ezrah.co/oob`
+- **Encoded Payload (`_oob` parameter):** Contains the DIDComm invitation details, including:
+    - **Invitation Type:** `https://didcomm.org/out-of-band/2.0/invitation`
+    - **Unique Invitation ID**
+    - **Issuer DID (from field)**
+    - **Verification Model** (if applicable)
+    - **Source (e.g., `AMCE Inc` company source initialization of the did message)**
+
+## QR Code Format for OOB Links
+
+OOB Links can be embedded within QR codes to streamline mobile interactions.
+
+### QR Code Structure
+
+- **Format:** QR Code containing `https://widget.ezrah.co/oob?...`
+- **Encoding:** Base64 or direct URI encoding
+- **Capacity:** Supports large DID payloads via QR Code versions 7+
+- **Security Features:**
+    - Encrypted payloads (optional)
+    - Time-limited validity
+    - Signature validation for integrity
+
+### QR Code Workflow
+
+1. **Issuer generates an OOB Link** and encodes it as a QR Code.
+2. **Holder scans the QR Code** using the Ezrah Wallet.
+3. **Ezrah Wallet decodes the OOB Link** and initiates DIDComm interaction.
+4. **Communication is established** for verification, credential exchange, or authentication.
+
+## OOB Interoperability Across DID Protocols
+
+Ezrah's OOB Links adhere to industry standards for interoperability, including:
+
+- **DIDComm v2** (Decentralized Identity Foundation)
+- **Aries RFC 0434** (Hyperledger Aries DIDComm Connection Invitations)
+- **W3C Verifiable Credential Exchange**
+
+### Implementing OOB Links in Ezrah
+
+#### 1. Generating an OOB Link
+
+- Define the purpose (verification, issuance, authentication).
+- Encode the invitation details following DIDComm standards.
+- Generate a secure URL containing the encoded payload.
+
+#### 2. Encoding as a QR Code
+
+- Convert the OOB Link into a QR Code.
+- Ensure the QR Code is scannable with Ezrah Wallet and compatible apps.
+
+#### 3. Initiating the OOB Interaction
+
+- User scans the QR Code or clicks the link.
+- Ezrah Wallet decodes the request and verifies the sender.
+- The interaction proceeds based on the predefined use case.
+
+#### 4. Verifying the OOB Interaction
+
+- Ensure DID resolution is successful.
+- Validate the cryptographic signature.
+- Establish a secure channel for the transaction.
+
+By using OOB Links and QR codes, Ezrah simplifies decentralized identity interactions while ensuring security and ease of use.
+
+---
+
+### References:
+
+- **[Verification Model](/docs/verification-models)** – Understanding how verifications are conducted.
+- **[Issuing Credentials](/docs/issue-credentials)** – How credentials are issued and managed.
+- **[Ezrah Wallet](/docs/)** – Managing credentials within the Ezrah Wallet.

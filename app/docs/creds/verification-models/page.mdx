@@ -1,0 +1,77 @@
+---
+title: "Verification Model"
+description: "Verification model description and structure"
+---
+
+# Verification Model
+
+## Overview
+
+The Verification Model in Ezrah Creds provides a structured approach for verifying credentials using Out-of-Band (OOB) verification. Organizations can create models that define the rules for credential validation, ensuring consistency and security in authentication processes.
+
+## Creating a Verification Model
+
+To create a Verification Model, follow these steps:
+
+1. **Access the Verification Model Section**
+
+    - Navigate to the Verification Model section within the Ezrah Creds platform.
+    - Click on the "Create New Model" button.
+2. **Define Model Parameters**
+
+    - Enter a descriptive name for the model.
+    - Select the credential types that will be verified against this model.
+    - Configure validation rules, such as expiration checks, required attributes, and issuer verification.
+3. **Set Verification Criteria**
+
+    - Specify mandatory and optional attributes required for validation.
+    - Define conditions for successful verification (e.g., credential issuance date, status, and issuer).
+4. **Save and Activate Model**
+
+    - Review the model configurations.
+    - Click "Save" to store the model.
+    - Activate the model to enable verification requests.
+
+## Verifying a Credential Using OOB
+
+Out-of-Band (OOB) verification allows external parties to verify credentials through a secure, controlled process.
+
+1. **Generate a Verification Request**
+
+    - Select the verification model to be used.
+    - Provide the recipient’s details (if applicable).
+    - Generate an OOB request link or QR code.
+2. **Recipient Submits Credentials**
+
+    - The recipient receives the OOB request.
+    - They scan the QR code or open the link via their Ezrah Wallet.
+    - They select and submit the relevant credential for verification.
+3. **Automated Validation**
+
+    - The submitted credential is checked against the Verification Model rules.
+    - The system verifies issuer details, credential integrity, and expiration.
+    - If all conditions are met, the credential is marked as verified.
+4. **View Verification Results**
+
+    - The verification status (Success/Failure) is displayed.
+    - Organizations can view detailed logs of the verification process.
+    - If verification fails, the system provides insights into failure reasons (e.g., expired credential, incorrect attributes).
+
+## Managing Verification Models
+
+Organizations can manage existing Verification Models within the Ezrah Creds platform:
+
+- **Edit Models:** Modify validation criteria, add/remove credential types.
+- **Deactivate Models:** Temporarily disable a model without deletion.
+- **Delete Models:** Remove outdated or unused models from the system.
+- **View Logs:** Monitor past verification attempts and results.
+
+## References
+
+For further information, see:
+
+- **[Issuing Credentials](https://chatgpt.com/c/67d6b7f3-a0e4-8008-a4d7-56a1fe4d6f0f#)** – Understanding how credentials are created.
+- **[Ezrah Wallet and Credential Management](https://chatgpt.com/c/67d6b7f3-a0e4-8008-a4d7-56a1fe4d6f0f#)** – How users store and use their credentials.
+- **[Organizations and DIDs](https://chatgpt.com/c/67d6b7f3-a0e4-8008-a4d7-56a1fe4d6f0f#)** – Ensuring issuer authenticity in verifications.
+
+This documentation provides a clear and structured approach to implementing the Verification Model within the Ezrah Creds ecosystem. You can now add images for each step to enhance usability.

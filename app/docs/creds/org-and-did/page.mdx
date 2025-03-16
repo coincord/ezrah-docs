@@ -1,0 +1,62 @@
+---
+title: "Organization and DIDs"
+description: "How Organization and DIDs work within the Ezrah Creds ecosystem"
+---
+
+# Organizations and Decentralized Identifiers (DIDs)
+
+## Overview
+
+This section provides an overview of Organizations and Decentralized Identifiers (DIDs) within the Ezrah system. It explains their fundamental differences, how they function, and their roles within our identity and credentialing framework.
+
+## Organizations
+
+### Definition
+
+An **Organization** represents a structured entity, such as a business, institution, or service provider, that operates within Ezrah’s ecosystem. Organizations may issue, verify, or consume Verifiable Credentials (VCs) to facilitate trusted interactions.
+
+### Key Characteristics
+
+- **Governance:** Operate within a defined legal or regulatory framework.
+- **Identity Registration:** Must be registered within Ezrah’s infrastructure to issue or verify credentials.
+- **Roles:** Can act as credential issuers, verifiers, or relying parties.
+- **Trust Model:** Verification is based on legal compliance and business agreements.
+
+## Decentralized Identifiers (DIDs)
+
+### Definition
+
+A **Decentralized Identifier (DID)** is a cryptographically verifiable, self-sovereign identity standard that enables individuals, organizations, or entities to authenticate without reliance on a centralized authority.
+
+### Key Characteristics
+
+- **Decentralization:** Not controlled by any single entity.
+- **Security:** Ownership and authenticity are validated using cryptographic keys.
+- **Self-Sovereignty:** Controlled by the keyholder, without intermediaries.
+- **Resolution & Verification:** Can be resolved on-chain or through DID resolvers to fetch associated public keys and metadata.
+
+## Interaction Between Organizations and DIDs in Ezrah
+
+Within Ezrah’s identity framework, Organizations and DIDs interact in the following ways:
+
+| Feature                   | Organizations                                                        | DIDs                                                 |
+| ------------------------- | -------------------------------------------------------------------- | ---------------------------------------------------- |
+| **Governance**            | Centralized within the entity’s structure                            | Decentralized, controlled by the keyholder           |
+| **Identity Registration** | Registered within Ezrah, potentially linked to compliance frameworks | Registered on-chain or via off-chain registries      |
+| **Usage**                 | Issue, verify, or consume credentials                                | Hold and present credentials                         |
+| **Verification**          | Based on regulatory compliance and trust agreements                  | Uses cryptographic proofs and blockchain-based trust |
+
+## Example Use Case
+
+1. A KYC provider registers as an Organization within Ezrah.
+2. The provider generates a DID to represent its identity on-chain.
+3. When issuing a KYC credential, the provider signs it using its DID.
+4. Users present their credentials, and verifiers resolve the provider’s DID to validate the credential’s authenticity.
+
+## Importance in Ezrah’s Ecosystem
+
+- **Organizations leverage DIDs** for enhanced security and verifiability.
+- **DIDs provide self-sovereign identity control** to both individuals and entities.
+- **Ezrah ensures interoperability** between traditional identity models and decentralized trust frameworks.
+
+By combining Organizations and DIDs, Ezrah creates a robust, secure, and verifiable identity system that balances compliance requirements with decentralized identity principles.
