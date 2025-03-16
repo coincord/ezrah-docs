@@ -1,22 +1,22 @@
-[
-  {
-    "name": "introduction to decentralized id",
-    "route": "/introduction"
+{
+  "introduction": {
+    "title": "Introduction to Decentralized ID",
+    "display": 1
   },
-  {
-    "name": "Organization and DIDs",
-    "route": "/org-and-did"
+  "org-and-did": {
+    "title": "Organization and DIDs",
+    "display": 2
   },
-  {
-    "name": "Issue Credentials",
-    "route": "/issue-credentials"
+  "issue-credentials": {
+    "title": "Issue Credentials",
+    "display": 3
   },
-  {
-    "name": "Verification Models",
-    "route": "/verification-models"
+  "verification-models": {
+    "title": "Verification Models",
+    "display": 4
   },
-  {
-    "name": "OOB Links",
-    "route": "/oob-links"
+  "oob-links": {
+    "title": "OOB Links",
+    "display": 5
   }
-]
+}
