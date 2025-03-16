@@ -1,0 +1,22 @@
+[
+  {
+    "name": "introduction to decentralized id",
+    "route": "/introduction"
+  },
+  {
+    "name": "Organization and DIDs",
+    "route": "/org-and-did"
+  },
+  {
+    "name": "Issue Credentials",
+    "route": "/issue-credentials"
+  },
+  {
+    "name": "Verification Models",
+    "route": "/verification-models"
+  },
+  {
+    "name": "OOB Links",
+    "route": "/oob-links"
+  }
+]

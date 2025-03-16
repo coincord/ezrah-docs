@@ -12,12 +12,12 @@
 @variant dark (&:where(.dark *));
 
 @theme {
-  --text-sm: 0.625rem;
-  --text-base: 1.25rem;
-  /* --default-font-family: "League Spartan" */
-  /*   --text-tiny--line-height: 1.5rem;  */
-  /*   --text-tiny--letter-spacing: 0.125rem;  */
-  /*   --text-tiny--font-weight: 500;  */
+    --text-sm: 0.625rem;
+    --text-base: 1.25rem;
+    /* --default-font-family: "League Spartan" */
+    /*   --text-tiny--line-height: 1.5rem;  */
+    /*   --text-tiny--letter-spacing: 0.125rem;  */
+    /*   --text-tiny--font-weight: 500;  */
 }
 
 /* *{ */
@@ -30,43 +30,47 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: "Fraunces";
-  padding-bottom: 25px;
+    font-family: "Fraunces";
+    padding-bottom: 25px;
+}
+
+.tx-fraunces {
+    font-family: "Fraunces";
 }
 
 html {
-  /* @apply text-body; */
+    /* @apply text-body; */
 }
 
 body {
-  font-feature-settings:
-    "rlig" 1,
-    "calt" 1;
+    font-feature-settings:
+        "rlig" 1,
+        "calt" 1;
 }
 
 .home-content p {
-  margin-top: 1.5em;
-  line-height: 1.75em;
+    margin-top: 1.5em;
+    line-height: 1.75em;
 }
 
 code.text-\[\.9em\] {
-  font-size: 14px;
+    font-size: 14px;
 }
 
 @media screen and (max-width: 1200px) {
-  .home-content .hide-medium {
-    display: none;
-  }
+    .home-content .hide-medium {
+        display: none;
+    }
 }
 
 @media screen and (max-width: 720px) {
-  .home-content p {
-    font-size: 0.9rem;
-  }
+    .home-content p {
+        font-size: 0.9rem;
+    }
 
-  .home-content .hide-small {
-    display: none;
-  }
+    .home-content .hide-small {
+        display: none;
+    }
 }
 
 /* Apply monospace font to code blocks */

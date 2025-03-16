@@ -45,12 +45,12 @@ const navbar = (
       <>
         <Image
           src="/img/ezrah-logo-white.png"
-          width={50}
-          height={50}
+          width={25}
+          height={25}
           alt="Logo"
           className="px-2"
         />
-        <b className="text-2xl">Ezrah Labs</b>
+        <b className="text-2xl tx-fraunces">Ezrah Labs</b>
       </>
     }
     // ... Your additional navbar options
