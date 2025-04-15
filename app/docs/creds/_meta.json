@@ -18,5 +18,9 @@
   "oob-links": {
     "title": "OOB Links",
     "display": 5
+  },
+  "creds-sdk": {
+    "title": "Ezrah Creds SDK",
+    "display": 6
   }
 }
