@@ -9,15 +9,15 @@ const sections = [
     href: "/docs",
   },
   {
-    title: "SDK documentations",
-    href: "/docs",
+    title: "Ezrah Creds SDK",
+    href: "/docs/creds/creds-sdk",
   },
   {
-    title: "Mobile SDK",
+    title: "Ezrah Credential Wallet SDK",
     href: "",
   },
   {
-    title: "Encrypted Cloud",
+    title: "Ezrah Encrypted Cloud Wallet",
     href: "",
   },
 ];
