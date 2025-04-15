@@ -1,0 +1,224 @@
+---
+title: Ezrah Creds SDK
+description: "Using the Ezrah Creds SDK"
+---
+
+
+## Ezrah Creds SDK — Developer Note
+
+This document outlines how to use the **Ezrah Creds SDK**, a TypeScript interface for issuing and verifying Verifiable Credentials (VCs), managing webhooks, interacting with DID documents, and accessing analytics via Ezrah’s GraphQL API.
+
+---
+
+### Installation
+
+```bash
+npm install ezrah-creds-sdk
+# or
+yarn add ezrah-creds-sdk
+```
+
+### Getting Started
+
+```ts
+import EzrahCredential from 'ezrah-creds-sdk';
+
+const ezrah = new EzrahCredential();
+```
+
+---
+
+## Credential Management
+
+### Issue a Credential
+
+```ts
+const credential = await ezrah.issueCredential({
+  claimID: 'template123',
+  did: 'did:example:abc123',
+  claims: {
+    name: 'John Doe',
+    role: 'Admin',
+  },
+});
+```
+
+### Issue via SDK Shortcut
+
+```ts
+const credential = await ezrah.issueCredentialSDK({
+  title: 'Employee Badge',
+  template_claim_id: 'template123',
+  claims: {
+    name: 'Jane Smith',
+    department: 'Engineering',
+  },
+});
+```
+
+---
+
+## Credential Verification
+
+### Create a Verification Model
+
+```ts
+const model = await ezrah.createVerificationModel({
+  title: 'Employee Verification',
+  purpose: 'Verify employee credentials',
+  claims_match: { department: 'Engineering' },
+  isser_match: 'issuer123',
+  manual_verification: false,
+});
+```
+
+### Fetch Verification Models
+
+```ts
+const models = await ezrah.verifcationModel();
+```
+
+### Get Verification Requests
+
+```ts
+const requests = await ezrah.verifcationRequests('model123');
+```
+
+---
+
+## DID and Templates
+
+### Resolve a DID
+
+```ts
+const didInfo = await ezrah.resolveDID('did:example:abc123');
+```
+
+### Fetch Templates
+
+```ts
+const templates = await ezrah.templates();
+```
+
+---
+
+## Credential Analytics
+
+### Get Issued Credentials
+
+```ts
+const credentials = await ezrah.issuedCredentials({
+  cursor: null,
+  take: 10,
+  timeline: 'lastMonth',
+  status: 'issued',
+  template_id: 'template123',
+});
+```
+
+### Fetch Credential Analytics
+
+```ts
+const analytics = await ezrah.credentialAnalytics();
+```
+
+---
+
+## Webhook Management
+
+### Add a Credential Webhook
+
+```ts
+const webhook = await ezrah.addCredentialsWebhook({
+  request_key: 'req123',
+  name: 'Credential Issued Webhook',
+  webhook_url: 'https://example.com/webhook',
+});
+```
+
+### Update a Webhook
+
+```ts
+const updatedWebhook = await ezrah.updateCredentialWebhook({
+  webhook_id: 'webhook123',
+  request_key: 'req123',
+  name: 'Updated Webhook',
+  webhook_url: 'https://example.com/updated-webhook',
+});
+```
+
+### Delete a Webhook
+
+```ts
+const result = await ezrah.deleteCredentialWebhook('webhook123');
+```
+
+### List Webhooks
+
+```ts
+const webhooks = await ezrah.webhooks();
+```
+
+---
+
+## Organization Management
+
+### Get Organization Info
+
+```ts
+const orgDetails = await ezrah.organization();
+```
+
+### Upload Organization Logo
+
+```ts
+const logoUrl = await ezrah.uploadOrganizationLogo(file);
+```
+
+---
+
+## API Key Management
+
+### List API Keys
+
+```ts
+const keys = await ezrah.apiKeys();
+```
+
+### Create an API Key
+
+```ts
+const newKey = await ezrah.addOrganizationApiKey('New API Key');
+```
+
+### Delete an API Key
+
+```ts
+const result = await ezrah.deleteOrganizationApiKey('key123');
+```
+
+---
+
+## Error Handling
+
+Use `try/catch` blocks for all SDK calls to manage errors gracefully:
+
+```ts
+try {
+  const response = await ezrah.templates();
+} catch (error) {
+  console.error('Something went wrong:', error);
+}
+```
+
+---
+
+## Notes
+
+- SDK is fully typed for TypeScript.
+- Best used alongside the Ezrah [GraphQL Playground](https://your-ezrah-playground-url.com) for manual query testing.
+- Keep API keys secure—use environment variables.
+
+---
+
+Let me know if you'd like this exported to PDF, Markdown, or integrated into your team's internal wiki!
