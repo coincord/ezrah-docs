@@ -43,7 +43,7 @@ Use this method when you already have a pre-defined credential template (claim I
 ```ts
 const credential = await ezrah.issueCredential({
   claimID: 'template123',
-  did: 'did:example:abc123',
+  did: 'did:ezrah:abc123',
   claims: {
     name: 'John Doe',
     role: 'Admin',
@@ -106,7 +106,7 @@ This section handles the discovery and templating side of the system. You can re
 Resolves a DID (Decentralized Identifier) and returns associated metadata. Useful for displaying user info or validating an identity before issuing or verifying credentials.
 
 ```ts
-const didInfo = await ezrah.resolveDID('did:example:abc123');
+const didInfo = await ezrah.resolveDID('did:ezrah:abc123');
 ```
 
 ### Fetch Templates
