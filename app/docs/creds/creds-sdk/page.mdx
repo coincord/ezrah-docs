@@ -235,16 +235,6 @@ Returns information about the current organization using the SDK. This includes 
 const orgDetails = await ezrah.organization();
 ```
 
-### Upload Organization Logo
-
-Uploads a logo that will appear on credentials and in verification UIs. This adds branding and trust to the experience.
-
-```ts
-const logoUrl = await ezrah.uploadOrganizationLogo(file);
-```
-
----
-
 ## Error Handling
 
 To ensure your integration is resilient, wrap all SDK methods in try/catch blocks. This helps you gracefully handle network issues, misconfigurations, or invalid inputs.
