@@ -1,0 +1,38 @@
+
+---
+title: "Ezrah Direct Credential Protocol"
+description: "issuing a credential directly to a did"
+---
+
+
+## Direct Credential
+
+A protocol that allows an agent to directly issue a credential to a did and have it sent to the DID in a secure mannner
+
+---
+
+## Details
+
+This is a simple protocol which allows Agents within the ezrah ecosystem directly create and send dids to the did holder, without multiple step process. It assumes the holder knows the did of the receiver
+
+```json filename="direct-credential.json"
+{
+  "type": "https://docs.ezrah.co/didcomm-protocols/direct-credential",
+  "id": "<uuid of issue message>",
+  "body": {
+    "goal_code": "<goal-code>",
+    "replacement_id": "<issuer unique id>",
+    "comment": "some comment"
+  },
+  "attachments": [
+    {
+      "id": "<attachment identifier>",
+      "media_type": "application/json",
+      "format": "<format-and-version>",
+      "data": {
+        "json": "<json>"
+      }
+    }
+  ]
+}
+```
