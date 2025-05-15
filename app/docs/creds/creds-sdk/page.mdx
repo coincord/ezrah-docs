@@ -88,6 +88,79 @@ const credential = await ezrah.issuePreClaimed({
 });
 ```
 
+### Issue via SD-JWT secure end to end encryption
+
+### 🔐 SD-JWT Secure End-to-End Encryption
+
+SD-JWT (Selective Disclosure JSON Web Token) enables users to disclose only specific claims (pieces of data) to a relying party, while keeping the rest confidential. When combined with secure end-to-end encryption, this approach ensures that sensitive information is protected both at rest and in transit.
+
+This implementation introduces secure encryption of the **disclosures** using **ephemeral (one-time use) keys** with the **X25519** key exchange protocol and **AES-256** encryption.
+
+---
+
+### 🧩 Encrypted Disclosures Structure
+
+```json
+{
+  "encrypted_disclosures": {
+    "cipher_text": "BXsdbifw9bfe9bdd......",
+    "nonce": "8ffsisdnindf",
+    "alg": "AES-256"
+  },
+  "emphemeral_keys": {
+    "back_up": "customerBackupKeyEnc(onetime_key)",
+    "device_key": "deviceKeyEnc(onetime_key)"
+  }
+}
+```
+
+---
+
+### 🔒 How It Works
+
+#### 1. **Claim Hashing and Disclosure Generation**
+
+* Before encryption, each **claim** (e.g., name, birthdate, etc.) is **hashed** to generate its disclosure representation.
+* These hashed claims are selectively shared only when the user permits it.
+
+#### 2. **Ephemeral Key Exchange with X25519**
+
+* A fresh **ephemeral key pair** is generated for each encryption session using **X25519**, a Diffie-Hellman key exchange over Curve25519.
+* These keys are **one-time use only**, providing **forward secrecy** and preventing reuse-based attacks.
+* The **receiver’s public key** (e.g., device or backup key) is used to derive a shared secret via X25519.
+
+#### 3. **Encryption using AES-256**
+
+* The shared secret derived from X25519 is used as the **symmetric key** for encrypting the disclosure payload.
+* AES-256 in **GCM or CBC mode** (implementation-specific) is used for the encryption.
+* A **nonce** (or IV) ensures randomness for each encryption, preventing identical cipher outputs.
+
+---
+
+### 🔑 Ephemeral Key Usage
+
+| Key          | Description                                           | Purpose                                             |
+| ------------ | ----------------------------------------------------- | --------------------------------------------------- |
+| `device_key` | Ephemeral public key derived for the current device   | Used to decrypt disclosures on the current device   |
+| `back_up`    | Ephemeral key for user’s backup or recovery mechanism | Enables access during recovery or multi-device sync |
+
+* These keys are included **encrypted** and can be safely sent over the network.
+* Only the holder of the corresponding **private keys** can derive the shared secret and decrypt the disclosures.
+
+---
+
+### ✅ Benefits
+
+* **Selective Disclosure**: Users share only what’s needed.
+* **End-to-End Encrypted**: Even intermediaries can’t read the claims.
+* **Forward Secrecy**: Ephemeral keys ensure past sessions remain secure.
+* **Recovery Friendly**: The `back_up` key allows for secure restoration of encrypted data.
+
+---
+
+> Would you like to see a flowchart diagram showing how encryption and decryption works using these keys?
+
+
 ---
 
 ## Credential Verification
