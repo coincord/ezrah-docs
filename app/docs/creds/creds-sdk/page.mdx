@@ -158,6 +158,196 @@ This implementation introduces secure encryption of the **disclosures** using **
 
 ---
 
+### Usage Of Encrypted SD-JWT Credential with EzrahCredsSDK
+-------------------------------------------------------------------------------------------------------------------------
+
+## SDK Initialization
+
+```ts
+let ezrahCredsSDK = new EzrahCredsSDK();
+```
+
+## Step 1: Define Credential Claims
+
+```ts
+const claims = {
+  sub: "subject_string_here",
+  kyc_provider: "DOJAH",
+  passport_id: "2347BV98FB",
+  expiry_date: new Date("10-10-2027").toISOString(),
+  issuanceDate: new Date().toISOString(),
+  first_name: "Nelson",
+  last_name: "Obioma",
+  issuer: { id: "issuer string here" },
+};
+
+const disclosureFrame: Array<string> = [
+  "passport_id",
+  "expiry_date",
+  "first_name",
+  "last_name",
+  "issuer",
+];
+```
+
+---
+
+## Step 2: Issue Encrypted SD-JWT Credential
+
+```ts
+const endUserPublicKey = "HexadecimalEncodedEndUserPublickKey";
+
+const result = await ezrahCredsSDK.issueEncryptedSDJWT({
+  claims,
+  disclosureFrame,
+  endUserEd25519HexPuk: endUserPublicKey,
+});
+```
+
+---
+
+## Result: Issued Credential
+
+```json
+{
+  "credential": "<jwt_string_here>"
+}
+```
+
+This is a signed and encrypted JWT that contains secure disclosures.
+
+---
+
+## Decoded JWT Structure
+
+```json
+{
+  "jwt": {
+    "header": {
+      "typ": "dc+sd-jwt",
+      "kid": "<key_id>",
+      "alg": "ES256K"
+    },
+    "payload": {
+      "iss": "did:ezrah:<issuer_did>",
+      "vct": "https://credentials.example.com/identity_credential",
+      "kyc_provider": "DOJAH",
+      "issuanceDate": "2025-05-15T14:23:41.174Z",
+      "_sd": ["...hashes"],
+      "_sd_alg": "sha-256"
+    },
+    "signature": "<signature_string>"
+  },
+  "encrypted_disclosures": {
+    "ciphertext": "...",
+    "iv": "...",
+    "ephemeralPublicKey": "..."
+  },
+  "metadata": {
+    "_hash_alg": "sha256",
+    "sd_count": 5,
+    "enc": "AES-GCM",
+    "key_agreement": "X25519"
+  }
+}
+```
+
+---
+
+## Decrypted Disclosure Structure
+
+Disclosures are decrypted on the client device.
+
+```json
+"disclosures": [
+  {
+    "key": "passport_id",
+    "value": "2347BV98FB",
+    "salt": "...",
+    "_digest": "...",
+    "_encoded": "..."
+  },
+  {
+    "key": "expiry_date",
+    "value": "2027-10-09T23:00:00.000Z"
+  },
+  {
+    "key": "first_name",
+    "value": "Nelson"
+  },
+  {
+    "key": "last_name",
+    "value": "Obioma"
+  },
+  {
+    "key": "issuer",
+    "value": { "id": "did:ezrah:<issuer_did>" }
+  }
+]
+```
+
+---
+
+## Behind the Scenes: Preprocessing
+
+Before sending the request, the SDK:
+
+* Hashes selected claims using `sha256`
+* Encrypts disclosures using `X25519 + AES-GCM`
+* Packs claims into `_sd`
+
+### Example of Preprocessed Structure
+
+```json
+{
+  "_hash_alg": "sha256",
+  "packedClaims": {
+    "sub": "subject_string_here",
+    "kyc_provider": "DOJAH",
+    "issuanceDate": "2025-05-15T14:23:41.207Z",
+    "_sd": ["<hashed_disclosure_1>", "<hashed_disclosure_2>", ...]
+  },
+  "disclosures": [
+    {
+      "key": "passport_id",
+      "value": "2347BV98FB",
+      "salt": "...",
+      "_digest": "...",
+      "_encoded": "..."
+    },
+    ...
+  ]
+}
+```
+
+---
+
+## Final Credential Creation API Request
+
+```json
+{
+  "subject": "did:ethr:0x1234...abcd",
+  "issuer": "did:ethr:0xissuer1234...def0",
+  "type": ["VerifiableCredential", "KYCVerifiedCredential"],
+  "issuanceDate": "2025-05-15T13:12:34.468Z",
+  "expirationDate": "2027-10-09T23:00:00.000Z"
+}
+```
+
+---
+
+## Summary
+
+The EzrahCredsSDK simplifies the issuance of secure, privacy-preserving SD-JWT credentials by handling:
+
+* Claim hashing
+* Selective disclosure
+* Client-side encryption
+
+All while producing verifiable and tamper-proof credentials ready for use in decentralized identity systems.
+
+---
+
 ## Credential Verification
 
 This section allows you to define models for verifying specific credentials. You can specify what claims to match, whether verification is manual, and then fetch all requests associated with those models. This is useful for onboarding, compliance, and access-control use cases.
