@@ -181,11 +181,11 @@ const disclosureFrame: Array<string> = [
 ```ts
 const endUserPublicKey = 'HexadecimalEncodedEndUserPublickKey';
 
-const result = await ezrahCredsSDK.issueEncryptedSDJWT({
+const result = await ezrahCredsSDK.issueEncryptedSDJWT(
   claims,
   disclosureFrame,
-  endUserEd25519HexPuk: endUserPublicKey,
-});
+  endUserPublicKey,
+);
 ```
 
 ```typescript
@@ -202,6 +202,7 @@ const result = await ezrahCredsSDK.issueEncryptedSDJWT({
 ##### Result: Issued Credential
 
 ```json
+// response / result
 {
   "credential": "<jwt_string_here>"
 }
