@@ -119,11 +119,7 @@ Partners **must validate this header** matches the agreed `request_key`.
 
 ## Retry & Delivery Notes
 
-> Optional: If you're planning to implement retries, timeouts, or signature verification, you can document it here. For example:
-
-* Webhooks are added to an internal queue for reliability.
-* Failed attempts may be retried (e.g., 3 times over 30 minutes).
-* Future versions may support signing payloads using HMAC or EdDSA.
+Webhook requests are retried by 70 attempts based on an expoential decaying timeline. i.e it retries lesser and lesser over a long period of time.
 
 ---
 
