@@ -22,5 +22,9 @@
   "creds-sdk": {
     "title": "Ezrah Creds SDK",
     "display": 6
+  },
+  "creds-webhook": {
+    "title": "Ezrah Webhook Events",
+    "display": 7
   }
 }
