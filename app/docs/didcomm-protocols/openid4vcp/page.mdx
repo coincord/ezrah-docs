@@ -34,7 +34,14 @@ Used by an issuer (e.g., organization) to **initiate a credential issuance** pro
     source: organization.name,
   },
   attachments: [
-    await DidService.generatePresentationExchangeFormat(verificationModel),
+    {
+      media_type: "application/json",
+      data: {
+        json: {
+          
+        }
+      }
+    }
   ],
 }
 ```
@@ -70,13 +77,11 @@ Upon receiving a `openid4vcp` request:
 ```ts
 {
   type: "https://docs.ezrah.co/docs/didcomm-protocols/openid4vcp-presentation",
-  id: uuid(),
+  id: "unique-uuid-id",
   from: holderDid,
   to: verifierDid,
   body: {
-    presentation_submission: {
-      // Standard format aligned with Presentation Exchange v2
-    },
+
   },
   attachments: [
     {
@@ -112,16 +117,9 @@ This helper function wraps a `verificationModel` into a Presentation Definition 
 * Verifiable Proof of Membership
 * Onboarding Automation
 * Trustless Access Control
+* Credential Authentication
 
 ---
 
-## Next Steps
 
-* [Presentation Exchange Format](https://identity.foundation/presentation-exchange/)
-<!-- * [Ezrah DID Registry](https://docs.ezrah.co/docs/did-registry) -->
-<!-- * [Building Wallet Agents](https://docs.ezrah.co/docs/wallet-integration) -->
-
----
-
-Let me know if you’d like this formatted as markdown, Docusaurus-compatible, or hosted on a live site — I can generate or export it accordingly.
 
