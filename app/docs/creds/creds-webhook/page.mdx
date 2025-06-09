@@ -14,7 +14,6 @@ When integrated with Ezrah’s credential system, partner endpoints may receive 
 
 * Accept **POST** requests.
 * Handle the following event types (sent in the JSON body):
-
   * `event` – the type of presentation.
   * `data` – the credential or presentation payload.
 * Must verify the presence of the header `X-EZH-REQ-KEY`.
@@ -27,11 +26,11 @@ Here are the **three event types** Ezrah may send:
 
 ---
 
-### 1. `w3c_presentation`
+### W3C Presentation -  `w3c_presentation`
 
 > **A Verifiable Presentation (VP)** containing one or more **W3C Verifiable Credentials**.
 
-#### 📤 Example Payload:
+#### Example Payload:
 
 ```json
 {
@@ -61,7 +60,7 @@ Here are the **three event types** Ezrah may send:
 
 ---
 
-### 2. `sd_jwt_presentation`
+### SD-JWT Presentation `sd_jwt_presentation`
 
 > A presentation using **Selective Disclosure JWT (SD-JWT)** format, typically used for compact, privacy-respecting claims.
 
@@ -84,7 +83,7 @@ Here are the **three event types** Ezrah may send:
 
 ---
 
-### 3. `auth_credential_presentation`
+### Auth Credential Presentation - `auth_credential_presentation`
 
 > A lightweight presentation used during authentication flows (e.g., logging into a partner system using a verifiable credential).
 
