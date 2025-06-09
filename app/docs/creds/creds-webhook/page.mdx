@@ -46,13 +46,13 @@ Here are the **three event types** Ezrah may send:
         "type": ["VerifiableCredential", "KYC"],
         "issuer": "did:ezrah:abc...",
         "credentialSubject": {
-          "id": "did:subject:123",
+          "id": "did:ezrah:123",
           "name": "Alice"
         },
         "proof": { ... }
       }
     ],
-    "holder": "did:holder:xyz",
+    "holder": "did:ezrah:xyz",
     "proof": { ... }
   }
 }
@@ -75,7 +75,7 @@ Here are the **three event types** Ezrah may send:
       "dob": "1990-01-01"
     },
     "issuer": "did:ezrah:abc...",
-    "subject": "did:subject:123",
+    "subject": "did:ezrah:123",
     "original_jwt": "eyJhbGciOi..."
   }
 }
@@ -95,7 +95,7 @@ Here are the **three event types** Ezrah may send:
   "data": {
     "credential_type": "EzrahAccessToken",
     "issued_by": "did:ezrah:issuer123",
-    "subject_id": "did:user:456",
+    "subject_id": "did:ezrah:456",
     "issued_at": "2025-06-08T12:00:00Z",
     "expires_at": "2025-06-09T12:00:00Z"
   }
