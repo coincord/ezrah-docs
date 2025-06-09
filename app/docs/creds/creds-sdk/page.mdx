@@ -500,6 +500,7 @@ const orgDetails = await ezrah.organization();
 This functionality set allows you to be able to send DIDComm Requests to partner DIDs in a customizable manner, you can also include other protocol request attachments within your requests to enable partner dids initiate integrated calls for different interactions and processes.
 
 ```javascript
+// Send a notification message to a did
 const result = await ezrah.createRequestMessage({
   source: "Partner X",
   oob_code: "eyJ3f32b298fdbdf9egf0gb3fb8-de29e9vfff22ff.....",
