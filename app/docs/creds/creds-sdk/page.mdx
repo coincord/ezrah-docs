@@ -189,10 +189,32 @@ const result = await ezrahCredsSDK.issueEncryptedSDJWT(
 ```
 
 ```typescript
-
+// Response
 {
   _encoded: string // base64Encoded SD-JWT
-  credential: JSON // SD-JWT
+  credential: { 
+    // SD-JWT
+    "header": {
+      "typ": "dc+sd-jwt",
+      "kid": "<key_id>",
+      "alg": "ES256K"
+    },
+    "payload": {
+      "iss": "did:ezrah:<issuer_did>",
+      "vct": "https://credentials.example.com/identity_credential",
+      "kyc_provider": "DOJAH",
+      "issuanceDate": "2025-05-15T14:23:41.174Z",
+      "_sd": ["...hashes"],
+      "_sd_alg": "sha-256"
+    },
+    "signature": "<signature_string>"
+  },
+  "encrypted_disclosures": {
+    "ciphertext": "...",
+    "iv": "...",
+    "ephemeralPublicKey": "..."
+  }
+  }
 }
 
 ```
@@ -468,8 +490,26 @@ Manage your organization settings such as general metadata and branding. These A
 
 Returns information about the current organization using the SDK. This includes your organization's name, branding, and configuration details.
 
-```ts
+```typescript
 const orgDetails = await ezrah.organization();
+```
+
+
+## Request Mediator 
+
+This functionality set allows you to be able to send DIDComm Requests to partner DIDs in a customizable manner, you can also include other protocol request attachments within your requests to enable partner dids initiate integrated calls for different interactions and processes.
+
+```javascript
+const result = await ezrah.createRequestMessage({
+  source: "Partner X",
+  oob_code: "eyJ3f32b298fdbdf9egf0gb3fb8-de29e9vfff22ff.....",
+  message: "Partner  X is trying to access your passport",
+  reciever_did: "did:ezrah:0x9cdac82d.....",
+})
+
+// Result is boolean
+// result = true/false
+
 ```
 
 ## Error Handling
