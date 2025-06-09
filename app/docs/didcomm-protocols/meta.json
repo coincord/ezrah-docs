@@ -2,5 +2,9 @@
   "direct-credential": {
     "title": "Direct Credential",
     "display": 1
+  },
+  "openid4vcp": {
+    "title": "OpenID for VC / P",
+    "display": 2
   }
 }

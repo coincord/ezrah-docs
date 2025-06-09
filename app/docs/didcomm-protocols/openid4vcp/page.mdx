@@ -1,0 +1,127 @@
+---
+title: "Ezrah OpenID For VC"
+description: "This protocol set outlines the didcomm message pipeline for ezrah's implementation fo the openID4VCP protocol"
+---
+
+# Ezrah DIDComm Protocol: OpenID4VC Protocols
+
+Ezrah supports the DIDComm implementation of two major OpenID for Verifiable Credential Protocols:
+
+* `openid4vcp`: Requesting Verifiable Credentials
+* `openid4vcp-presentation`: Presenting Verifiable Credentials
+
+This document outlines how to initiate and interact with these flows using Ezrah's DIDComm protocol payload structure.
+
+---
+
+## Protocol Types
+
+### `openid4vcp`
+
+Used by an issuer (e.g., organization) to **initiate a credential issuance** process.
+
+#### Example Payload
+
+```ts
+{
+  type: "https://docs.ezrah.co/docs/didcomm-protocols/openid4vcp",
+  id: verificationModel.id,
+  from: organization.identifier?.did,
+  body: {
+    goal_code: `Login with ${organization.name}`,
+    goal: verificationModel.purpose,
+    verification_model: verificationModel.id,
+    source: organization.name,
+  },
+  attachments: [
+    await DidService.generatePresentationExchangeFormat(verificationModel),
+  ],
+}
+```
+
+##### Fields
+
+| Field                     | Description                                                                          |
+| ------------------------- | ------------------------------------------------------------------------------------ |
+| `type`                    | Protocol URI for openid4vcp                                                          |
+| `id`                      | Unique identifier for the verification request, typically the `verificationModel.id` |
+| `from`                    | DID of the requesting organization                                                   |
+| `body.goal_code`          | Displayed message, e.g. `Login with Acme Inc.`                                       |
+| `body.goal`               | Purpose of the verification (e.g., login, KYC, registration)                         |
+| `body.verification_model` | Reference to the verification model                                                  |
+| `body.source`             | Human-readable name of the organization                                              |
+| `attachments`             | Contains the presentation definition required for issuance                           |
+
+---
+
+### `openid4vcp-presentation`
+
+Used by a holder to **present credentials** in response to a request.
+
+#### Expected Behavior
+
+Upon receiving a `openid4vcp` request:
+
+* A wallet or agent will interpret the presentation definition and construct a Verifiable Presentation.
+* The holder responds with a `openid4vcp-presentation` message.
+
+#### Example Payload (Conceptual)
+
+```ts
+{
+  type: "https://docs.ezrah.co/docs/didcomm-protocols/openid4vcp-presentation",
+  id: uuid(),
+  from: holderDid,
+  to: verifierDid,
+  body: {
+    presentation_submission: {
+      // Standard format aligned with Presentation Exchange v2
+    },
+  },
+  attachments: [
+    {
+      format: "application/vc+ld+json",
+      data: {
+        base64: base64urlEncode(presentation)
+      }
+    }
+  ]
+}
+```
+
+---
+
+## `DidService.generatePresentationExchangeFormat(verificationModel)`
+
+This helper function wraps a `verificationModel` into a Presentation Definition structure as per the Presentation Exchange specification. It is used to generate the `attachments` section of the message payload.
+
+---
+
+## Compatibility
+
+* Compliant with [DIDComm v2](https://identity.foundation/didcomm-messaging/spec/)
+* Based on [OpenID for Verifiable Credential Issuance (OID4VCI)](https://openid.net/specs/openid-4-verifiable-credential-issuance-1_0.html)
+* Presentation Exchange 2.0 compliant
+
+---
+
+## Use Cases
+
+* Decentralized Login
+* Reusable KYC
+* Verifiable Proof of Membership
+* Onboarding Automation
+* Trustless Access Control
+
+---
+
+## Next Steps
+
+* [Presentation Exchange Format](https://identity.foundation/presentation-exchange/)
+<!-- * [Ezrah DID Registry](https://docs.ezrah.co/docs/did-registry) -->
+<!-- * [Building Wallet Agents](https://docs.ezrah.co/docs/wallet-integration) -->
+
+---
+
+Let me know if you’d like this formatted as markdown, Docusaurus-compatible, or hosted on a live site — I can generate or export it accordingly.
+
