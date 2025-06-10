@@ -3,6 +3,7 @@ title: "Ezrah Creds SDK"
 description: "Using the Ezrah Creds SDK"
 ---
 
+import {Steps} from "nextra/components"
 
 ## Ezrah Creds SDK
 
@@ -90,7 +91,6 @@ Response
 
 
 ### Issue an Encrypted Credential
-
 Issue via SD-JWT secure end to end encryption
 
 #### SD-JWT Secure End-to-End Encryption
@@ -99,23 +99,11 @@ SD-JWT (Selective Disclosure JSON Web Token) enables users to disclose only spec
 
 This implementation introduces secure encryption of the disclosures using ephemeral (one-time use) keys with the X25519 key exchange protocol and AES-256 encryption.
 
-#### Encrypted Disclosures Structure
-
-```json
-{
-  encrypted_disclosures: {
-      ciphertext: 'gCxNC18f31VAoX6Mea4fh3sdI5wDOfKUuEC9CHuVEzEcmOFY1XVPX5u21Vft2...',
-      iv: 'JyZ08NSSqrbLHVCt',
-      ephemeralPubKey: 'LZQFwtDa0eSLkpPKjKpyVYlDrMcFMYN7kPdCENhefw0',
-      enc: 'AES-GCM',
-      alg: 'X25519-AES-GCM'
-  }
-}
-
-```
 
 ### How It Works
 
+
+<Steps>
 ##### 1. **Claim Hashing and Disclosure Generation**
 
 - Before encryption, each **claim** (e.g., name, birthdate, etc.) is **hashed** to generate its disclosure representation.
@@ -133,9 +121,14 @@ This implementation introduces secure encryption of the disclosures using epheme
 - AES-256 in **GCM or CBC mode** (implementation-specific) is used for the encryption.
 - A **nonce** (or IV) ensures randomness for each encryption, preventing identical cipher outputs.
 
+</Steps>
 ---
+> [!Note]
+>
+> A note on ephemeral key usage and backup process and functionalities
 
-#### Ephemeral Key Usage
+
+#### Ephemeral Key Usage (Key Backup and Recovery)
 
 | Key          | Description                                           | Purpose                                             |
 | ------------ | ----------------------------------------------------- | --------------------------------------------------- |
@@ -153,7 +146,11 @@ This implementation introduces secure encryption of the disclosures using epheme
 - **Forward Secrecy**: Ephemeral keys ensure past sessions remain secure.
 - **Recovery Friendly**: The `back_up` key allows for secure restoration of encrypted data.
 
-#### Step 1: Define Credential Claims
+---
+#### How to Create an Encrypted SD-JWT Credential
+
+<Steps>
+##### Step 1: Define Credential Claims
 
 ```ts
 const claims = {
@@ -176,7 +173,7 @@ const disclosureFrame: Array<string> = [
 ];
 ```
 
-#### Step 2: Issue Encrypted SD-JWT Credential
+##### Step 2: Issue Encrypted SD-JWT Credential
 
 ```ts
 const endUserPublicKey = 'HexadecimalEncodedEndUserPublickKey';
@@ -221,7 +218,7 @@ const result = await ezrahCredsSDK.issueEncryptedSDJWT(
 
 
 
-##### Result: Issued Credential
+###### Result: Issued Credential
 
 ```json
 // response / result
@@ -234,9 +231,11 @@ This is a signed and encrypted JWT that contains secure disclosures.
 
 ---
 
-##### Decoded JWT Structure
 
-> ! **Note**
+###### Decoded JWT Structure
+
+> [!Note]
+> 
 > This is also the structure of the credential JSON response within the issueEncryptedSDJWT method.
 
 ```json
@@ -264,9 +263,23 @@ This is a signed and encrypted JWT that contains secure disclosures.
 }
 ```
 
+Encrypted Disclosure structure
+```json
+{
+  encrypted_disclosures: {
+      ciphertext: 'gCxNC18f31VAoX6Mea4fh3sdI5wDOfKUuEC9CHuVEzEcmOFY1XVPX5u21Vft2...',
+      iv: 'JyZ08NSSqrbLHVCt',
+      ephemeralPubKey: 'LZQFwtDa0eSLkpPKjKpyVYlDrMcFMYN7kPdCENhefw0',
+      enc: 'AES-GCM',
+      alg: 'X25519-AES-GCM'
+  }
+}
+
+```
+
 ---
 
-#### Decrypted Disclosure Structure
+###### Decrypted Disclosure Structure
 
 Disclosures are decrypted on the client device.
 
@@ -300,7 +313,7 @@ Disclosures are decrypted on the client device.
 
 ---
 
-#### Behind the Scenes: Preprocessing
+###### Behind the Scenes: Preprocessing
 
 Before sending the request, the SDK:
 
@@ -308,7 +321,7 @@ Before sending the request, the SDK:
 - Encrypts disclosures using `X25519 + AES-GCM`
 - Packs claims into `_sd`
 
-##### Example of Preprocessed Structure
+###### Example of Preprocessed Structure
 
 ```json
 {
@@ -345,6 +358,7 @@ Before sending the request, the SDK:
   "expirationDate": "2027-10-09T23:00:00.000Z"
 }
 ```
+</Steps>
 
 ---
 
