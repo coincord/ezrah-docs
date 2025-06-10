@@ -348,6 +348,39 @@ Before sending the request, the SDK:
 
 ---
 
+## OAuth Verification Model.
+This section allows you define authentication verification models which use the oauth protocol pattern to allow you handle third party authentication and verification using your credentials in easy to manage flows.
+
+```typescript
+
+const authenticationModel: VerificationModel = await ezrah.createAuthVerificationModel({
+  title: "Title of the verification model", 
+  claims_match: "firstname,lastname,passport_id", // claims to match, comma seperated
+  issuer_match: "did:ezrah:sdinsidnsdn", // if a did is entered this would be used as the issuer to match against, this always defaults to your organization did,
+  manual_verification: true, // set to true to get webhook notifications from these verifications.
+  client_id: "unique_client_id_here", 
+  client_secret: "client_secret_here",
+  oob_prefix: "https://the_domain_prefix_for_oob", // this defaults to oauth.ezrah.co,
+  callback: "https://partner_call_back_url_for_oauth_process.",
+  custom_url_scheme: "url_scheme_for_mobile_clients",
+  session_duration: "148000" // Session duration in seconds, e.g 2 days (148000)
+})
+
+// Response
+type VerificationModel = {
+  id: string,
+  verification_title: string,
+  purpose: string,
+  verification_link: string,
+  manual_verification: string,
+  issuer_match: string
+  claims_match: string,
+  client_id: string | null, 
+  client_secret: string | null
+}
+
+```
+
 
 ## Credential Verification
 
@@ -358,13 +391,26 @@ This section allows you to define models for verifying specific credentials. You
 Use this method to define the conditions under which a credential should be considered valid. This can include issuer checks, field matching, and whether the request requires human review.
 
 ```ts
-const model = await ezrah.createVerificationModel({
+const model: VerificationModel = await ezrah.createVerificationModel({
   title: 'Employee Verification',
   purpose: 'Verify employee credentials',
   claims_match: { department: 'Engineering' },
-  isser_match: 'issuer123',
+  issuer_match: 'issuer123',
   manual_verification: false,
 });
+
+type VerificationModel = {
+  id: string,
+  verification_title: string,
+  purpose: string,
+  verification_link: string,
+  manual_verification: string,
+  issuer_match: string
+  claims_match: string,
+  client_id: string | null, 
+  client_secret: string | null
+}
+
 ```
 
 ### Fetch Verification Models
@@ -395,6 +441,60 @@ Resolves a DID (Decentralized Identifier) and returns associated metadata. Usefu
 
 ```ts
 const didInfo = await ezrah.resolveDID('did:ezrah:abc123');
+
+// sample resolve did
+//
+{
+  "did": "did:ezrah:0x7d3241B6eE2E05F09fDa3809dFA54530CE0b8fF6",
+  "resolvedDID": {
+        "didDocumentMetadata": {
+          "versionId": "72276059",
+          "updated": "2025-06-02T14:34:03Z"
+        },
+       "didResolutionMetadata": {
+            "contentType": "application/did+ld+json"
+        },
+        "didDocument": {
+            "id": "did:ezrah:0x7d3241B6eE2E05F09fDa3809dFA54530CE0b8fF6",
+            "verificationMethod": [
+                {
+                  "id": "did:ezrah:0x7d3241B6eE2E05F09fDa3809dFA54530CE0b8fF6#controller",
+                  "type": "EcdsaSecp256k1RecoveryMethod2020",
+                  "controller": "did:ezrah:0x7d3241B6eE2E05F09fDa3809dFA54530CE0b8fF6",
+                  "blockchainAccountId": "eip155:137:0x7d3241B6eE2E05F09fDa3809dFA54530CE0b8fF6"
+                },
+               {
+                  "id": "did:ezrah:0x7d3241B6eE2E05F09fDa3809dFA54530CE0b8fF6#delegate-1",
+                  "type": "X25519KeyAgreementKey2019",
+                  "controller": "did:ezrah:0x7d3241B6eE2E05F09fDa3809dFA54530CE0b8fF6",
+                  "publicKeyBase58": "F4LBhZCRzqxPYLamhZZXgZjwEEB3txfLo6TXbQZa2WQC"
+                }
+            ],
+            "authentication": [
+               "did:ezrah:0x7d3241B6eE2E05F09fDa3809dFA54530CE0b8fF6#controller"
+             ],
+             "assertionMethod": [
+                 "did:ezrah:0x7d3241B6eE2E05F09fDa3809dFA54530CE0b8fF6#controller"
+             ],
+             "service": [
+                {
+                    "id": "did:ezrah:0x7d3241B6eE2E05F09fDa3809dFA54530CE0b8fF6#service-1",
+                    "type": "DIDCommMessaging",
+                    "serviceEndpoint": "https://dev-eccw.ezrah.co/webhooks/did/service/did:ezrah:0x7d3241B6eE2E05F09fDa3809dFA54530CE0b8fF6"
+                }
+              ],
+              "keyAgreement": [
+                "did:ezrah:0x7d3241B6eE2E05F09fDa3809dFA54530CE0b8fF6#delegate-1"
+              ],
+              "@context": [
+                "https://www.w3.org/ns/did/v1",
+                "https://w3id.org/security/suites/secp256k1recovery-2020/v2",
+                "https://w3id.org/security/v3-unstable"
+             ]
+       }
+  }
+
+}
 ```
 
 ### Fetch Templates
