@@ -35,6 +35,15 @@ Here are the **three event types** Ezrah may send:
 ```json filename="event.json"
 {
   "event": "w3c_presentation",
+  verification_model: {
+    id: string,
+    verification_title: string,
+    title: string,
+    purpose: string,
+    verification_link: string,
+    model_type: string,
+    client_id: string
+  },
   "data": {
     "@context": [
       "https://www.w3.org/2018/credentials/v1"
@@ -69,6 +78,15 @@ Here are the **three event types** Ezrah may send:
 ```json filename="event.json"
 {
   "event": "sd_jwt_presentation",
+  verification_model: {
+    id: string,
+    verification_title: string,
+    title: string,
+    purpose: string,
+    verification_link: string,
+    model_type: string,
+    client_id: string
+  },
   "data": {
     "status" "VERIFIED",
     "issuer": "did:ezrah:abc...",
@@ -89,6 +107,15 @@ Here are the **three event types** Ezrah may send:
 ```json filename="event.json"
 {
   "event": "auth_credential_presentation",
+  verification_model: {
+    id: string,
+    verification_title: string,
+    title: string,
+    purpose: string,
+    verification_link: string,
+    model_type: string,
+    client_id: string
+  },
   "data": {
     "credential_type": "EzrahAccessToken",
     "issued_by": "did:ezrah:issuer123",
