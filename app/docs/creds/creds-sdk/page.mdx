@@ -59,7 +59,7 @@ const ezrah = new EzrahCredential();
 
 This section contains methods to issue Verifiable Credentials (VCs) to users. These credentials can contain any structured data and are tied to a DID. Use this to programmatically issue credentials for KYC, employment, certification, and more.
 
-### Issue a Credential
+### Issue a pre-defined Credential
 
 Use this method when you already have a pre-defined credential template (claim ID) and want to issue a VC to a user identified by their DID.
 
@@ -85,9 +85,23 @@ Response
 ```
 
 
-[### Issue via SDK Shortcut]: #
+### Issue a Credential via didcomm:
 
-[A simplified wrapper to issue credentials using just the basic details (title, claim ID, and fields). Ideal for quick issuance flows or UI-based forms.]: #
+A simplified wrapper to issue credentials using just the basic details (title, claim ID, and fields). Ideal for quick issuance flows or UI-based forms
+
+The claims must match the claims referenced within the template id. it doesn't need to be a complete match of the list but a partial match.
+
+```js
+
+const credential = await ezrah.issueCredentialSDK({
+  title: "Request title", 
+  template_claim_id: "a_claims_template_from_template_list",
+  claims: {
+    name: "John Doe", 
+    role: "Admin"
+  }
+})
+```
 
 
 ### Issue an Encrypted Credential
@@ -369,6 +383,7 @@ This section allows you define authentication verification models which use the 
 
 const authenticationModel: VerificationModel = await ezrah.createAuthVerificationModel({
   title: "Title of the verification model", 
+  purpose: "purpose of the verification model",
   claims_match: "firstname,lastname,passport_id", // claims to match, comma seperated
   issuer_match: "did:ezrah:sdinsidnsdn", // if a did is entered this would be used as the issuer to match against, this always defaults to your organization did,
   manual_verification: true, // set to true to get webhook notifications from these verifications.
@@ -432,11 +447,10 @@ type VerificationModel = {
 Retrieves a list of verification models you’ve defined. Helpful for displaying available verification flows in your dashboard or admin interface.
 
 ```ts
-const models = await ezrah.verifcationModel();
+const models = await ezrah.verifcationModels();
 ```
 
 ### Get Verification Requests
-
 Returns all credential verification requests submitted to a specific verification model. You can use this to build review dashboards or trigger workflows based on verification outcomes.
 
 ```ts
@@ -533,7 +547,7 @@ Lists all credentials issued under your organization, optionally filtered by tim
 const credentials = await ezrah.issuedCredentials({
   cursor: null,
   take: 10,
-  timeline: 'lastMonth',
+  timeline: '05/07/2024-05/09/2025',  // Previous time-RecentTime
   status: 'issued',
   template_id: 'template123',
 });
@@ -621,12 +635,15 @@ const result = await ezrah.createRequestMessage({
   oob_code: "eyJ3f32b298fdbdf9egf0gb3fb8-de29e9vfff22ff.....",
   message: "Partner  X is trying to access your passport",
   reciever_did: "did:ezrah:0x9cdac82d.....",
+  session_code: "session tracker for the individual request"
 })
 
 // Result is boolean
 // result = true/false
 
 ```
+The `session_code` in the request would be used passed through the protocol processes and made available at the webhooks and callback urls to detect the active session the request belongs to.
+
 
 ## Error Handling
 
