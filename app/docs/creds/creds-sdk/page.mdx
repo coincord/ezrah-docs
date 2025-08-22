@@ -61,6 +61,7 @@ const ezrah = new EzrahCredential();
 ## Credential Management
 
 This section contains methods to issue Verifiable Credentials (VCs) to users. These credentials can contain any structured data and are tied to a DID. Use this to programmatically issue credentials for KYC, employment, certification, and more.
+These credentials can contain any structured data and are tied to a DID. Use this to programmatically issue credentials for KYC, employment, certification, and more.
 
 ### Issue a pre-defined Credential
 
@@ -88,24 +89,38 @@ Response
 ```
 
 
-### Issue a Credential via didcomm:
+### Issue a Credential via SDK:
 
-A simplified wrapper to issue credentials using just the basic details (title, claim ID, and fields). Ideal for quick issuance flows or UI-based forms
+A simplified method to issue credentials using just the basic details (title, claim ID, and fields). Ideal for quick issuance flows or UI-based forms.
 
 The claims must match the claims referenced within the template id. it doesn't need to be a complete match of the list but a partial match.
 
 ```js
 
 const credential = await ezrah.issueCredentialSDK({
-  title: "Request title", 
+  title: "Request title",
   template_claim_id: "a_claims_template_from_template_list",
   claims: {
-    name: "John Doe", 
+    name: "John Doe",
     role: "Admin"
+  },
+  options: {
+    policy_control: false // default
   }
 })
 ```
 
+### Update Credential Policy
+
+This method allows you to update the policy control state of a credential.
+
+```ts
+const result = await ezrah.policyControlCredential({
+  credential_urn: "urn:vc:abc123...",
+  action: "REVOKE", // or "REVOKE, EXPIRY, SUSPEND"
+  state: true, // or false
+});
+```
 
 ### Issue an Encrypted Credential
 Issue via SD-JWT secure end to end encryption
@@ -199,6 +214,9 @@ const result = await ezrahCredsSDK.issueEncryptedSDJWT(
   claims,
   disclosureFrame,
   endUserPublicKey,
+  {
+    policy_control: false // default
+  }
 );
 ```
 
@@ -206,7 +224,8 @@ const result = await ezrahCredsSDK.issueEncryptedSDJWT(
 // Response
 {
   _encoded: string // base64Encoded SD-JWT
-  credential: { 
+  urn: string, // nullable
+  credential: {
     // SD-JWT
     "header": {
       "typ": "dc+sd-jwt",
@@ -252,7 +271,7 @@ This is a signed and encrypted JWT that contains secure disclosures.
 ###### Decoded JWT Structure
 
 > [!Note]
-> 
+>
 > This is also the structure of the credential JSON response within the issueEncryptedSDJWT method.
 
 ```json
@@ -385,12 +404,12 @@ This section allows you define authentication verification models which use the 
 ```typescript
 
 const authenticationModel: VerificationModel = await ezrah.createAuthVerificationModel({
-  title: "Title of the verification model", 
+  title: "Title of the verification model",
   purpose: "purpose of the verification model",
   claims_match: "firstname,lastname,passport_id", // claims to match, comma seperated
   issuer_match: "did:ezrah:sdinsidnsdn", // if a did is entered this would be used as the issuer to match against, this always defaults to your organization did,
   manual_verification: true, // set to true to get webhook notifications from these verifications.
-  client_id: "unique_client_id_here", 
+  client_id: "unique_client_id_here",
   client_secret: "client_secret_here",
   oob_prefix: "https://the_domain_prefix_for_oob", // this defaults to oauth.ezrah.co,
   callback: "https://partner_call_back_url_for_oauth_process.",
@@ -407,7 +426,7 @@ type VerificationModel = {
   manual_verification: string,
   issuer_match: string
   claims_match: string,
-  client_id: string | null, 
+  client_id: string | null,
   client_secret: string | null
 }
 
@@ -439,7 +458,7 @@ type VerificationModel = {
   manual_verification: string,
   issuer_match: string
   claims_match: string,
-  client_id: string | null, 
+  client_id: string | null,
   client_secret: string | null
 }
 
@@ -627,7 +646,7 @@ const orgDetails = await ezrah.organization();
 
 ---
 
-## Request Mediator 
+## Request Mediator
 
 This functionality set allows you to be able to send DIDComm Requests to partner DIDs in a customizable manner, you can also include other protocol request attachments within your requests to enable partner dids initiate integrated calls for different interactions and processes.
 
