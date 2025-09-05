@@ -630,6 +630,44 @@ Retrieves all currently registered webhooks. Useful for building settings pages 
 const webhooks = await ezrah.webhooks();
 ```
 
+### Decrypt Encrypted Webhook Payload
+
+Decrypts encrypted presentation payloads received from webhooks using your organization's RSA private key. This method handles both encrypted and unencrypted webhook data and extracts the presented claims from SD-JWT presentations.
+
+```ts
+const decryptedPayload = await ezrah.decryptEncryptedWebhookPayload(
+  {
+    event: 'credential_verification',
+    data: encryptedPayloadData, // EncPayload object or string
+    encrypted: true
+  },
+  rsaPrivateKey // Your organization's RSA private key
+);
+```
+
+**Parameters:**
+- `enc`: Object containing event type, data, and encryption status
+- `rsaPrivateKey`: Your organization's RSA private key for decryption
+
+**Returns:**
+```typescript
+{
+  presentations: {
+    payload: {
+      [key: string]: unknown;
+      presented_claims: object;
+    }
+  }[];
+  event: string;
+}
+```
+
+The method automatically:
+- Handles both encrypted and unencrypted webhook payloads
+- Decodes SD-JWT presentations and extracts disclosed claims
+- Parses JWT headers, payloads, and signatures
+- Reconstructs the presented claims from the disclosure format
+
 ---
 
 ## Organization Management
