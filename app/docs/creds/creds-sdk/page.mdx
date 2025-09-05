@@ -10,7 +10,7 @@ import {Steps} from "nextra/components"
 This document provides a comprehensive overview of how to use the **Ezrah Creds SDK**, a TypeScript package that simplifies the creation, issuance, and verification of Verifiable Credentials (VCs). It also includes tools for managing Decentralized Identifiers (DIDs), webhook integrations, organization settings, and analytics — all designed to integrate seamlessly with Ezrah’s identity infrastructure.
 
 > [!Note]
-> Current SDK Version: @coincord/ezrah-creds-sdk@1.0.0-alpha.12
+> Current SDK Version: @coincord/ezrah-creds-sdk@1.0.0-alpha.14
 
 ---
 
@@ -634,6 +634,7 @@ const webhooks = await ezrah.webhooks();
 
 Decrypts encrypted presentation payloads received from webhooks using your organization's RSA private key. This method handles both encrypted and unencrypted webhook data and extracts the presented claims from SD-JWT presentations.
 
+> You can get your organization's Private key from the dashboard, with Admin access
 ```ts
 const decryptedPayload = await ezrah.decryptEncryptedWebhookPayload(
   {
@@ -664,7 +665,7 @@ const decryptedPayload = await ezrah.decryptEncryptedWebhookPayload(
 
 The method automatically:
 - Handles both encrypted and unencrypted webhook payloads
-- Decodes SD-JWT presentations and extracts disclosed claims
+- Decodes SD-JWT presentations and extracts presented claims
 - Parses JWT headers, payloads, and signatures
 - Reconstructs the presented claims from the disclosure format
 
