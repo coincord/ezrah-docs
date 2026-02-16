@@ -43,9 +43,10 @@ const IndexPage: FC = () => {
           </div>
           <div className="flex flex-row mt-4 mb-4">
             <div className="mx-auto flex-row flex gap-4 justify-items-center">
-              {sections.map((item) => {
+              {sections.map((item, index) => {
                 return (
                   <Cards.Card
+                    key={index}
                     title={item.title}
                     href={item.href}
                     arrow={true}

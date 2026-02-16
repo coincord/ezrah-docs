@@ -68,10 +68,6 @@ const withNextra = nextra({
 
 const nextConfig = withNextra({
   reactStrictMode: true,
-  eslint: {
-    // ESLint behaves weirdly in this monorepo.
-    ignoreDuringBuilds: true,
-  },
   redirects: async () => [
     {
       source: "/docs/guide/:slug(typescript|latex|tailwind-css|mermaid)",
@@ -127,14 +123,6 @@ const nextConfig = withNextra({
     return config;
   },
   experimental: {
-    turbo: {
-      rules: {
-        "./components/icons/*.svg": {
-          loaders: ["@svgr/webpack"],
-          as: "*.js",
-        },
-      },
-    },
     optimizePackageImports: ["@components/icons"],
   },
 });
