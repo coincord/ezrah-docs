@@ -3,22 +3,27 @@ title: "Ezrah Creds SDK"
 description: "Using the Ezrah Creds SDK"
 ---
 
-import {Steps} from "nextra/components"
+import { Steps } from 'nextra/components'
+import { Callout } from 'nextra/components'
+import { Tabs, Tab } from 'nextra/components'
 
-## Ezrah Creds SDK
+# Ezrah Creds SDK
 
-This document provides a comprehensive overview of how to use the **Ezrah Creds SDK**, a TypeScript package that simplifies the creation, issuance, and verification of Verifiable Credentials (VCs). It also includes tools for managing Decentralized Identifiers (DIDs), webhook integrations, organization settings, and analytics — all designed to integrate seamlessly with Ezrah’s identity infrastructure.
+<Callout type="info">
+  The **Ezrah Creds SDK** is a TypeScript package that simplifies the creation, issuance, and verification of Verifiable Credentials (VCs), along with DID management, webhook integrations, and analytics.
+</Callout>
 
-> [!Note]
-> Current SDK Version: @coincord/ezrah-creds-sdk@1.0.0-alpha.14
-
----
+<Callout type="default">
+  **Current Version:** `@coincord/ezrah-creds-sdk@1.0.0-alpha.14`
+</Callout>
 
 ## Installation
 
 To start using the Ezrah Creds SDK, install it via npm or yarn. This will add the SDK to your project so you can begin issuing and verifying credentials and interacting with the Ezrah platform programmatically.
 
-> Ezrah(Coincord) Libraries are hosted on github not npm so add this to your .npmrc file, (vim ~/.npmrc)
+<Callout type="warning">
+  **Important:** Ezrah (Coincord) libraries are hosted on GitHub, not npm. Add the following to your `.npmrc` file:
+</Callout>
 
 ```sh
 @coincord:registry=https://npm.pkg.github.com
@@ -38,13 +43,17 @@ or
 yarn install @coincord/ezrah-creds-sdk
 ```
 
-Also setup your environment configs with the following configurations.
+### Environment Configuration
+
+Set up your environment variables:
 ```sh
 EZRAH_CREDENTIAL_BASE_URL=api.ezrah.co
 EZRAH_ORGANIZATION_API_KEY=<your_api_key>
 ```
 
-You can generate new API keys on your Ezrah Dashboard
+<Callout type="default">
+  **Generate API Keys:** You can create new API keys from your Ezrah Dashboard
+</Callout>
 
 ## Getting Started
 
@@ -55,6 +64,80 @@ import EzrahCredential from '@coincord/ezrah-creds-sdk';
 
 const ezrah = new EzrahCredential();
 ```
+
+---
+
+## Sub Issuers
+
+Sub issuers are secondary credential issuers that operate under your organization's authority, enabling delegated credential issuance while maintaining trust and governance. Each sub issuer has its own decentralized identifier (DID) but inherits the parent organization's permissions and authentication.
+
+### Create a Sub Issuer
+
+Create a new sub issuer under your organization:
+
+```ts
+const subIssuer = await ezrah.createSubIssuer({
+  name: "University Registrar",
+  description: "Academic credential issuer for degree certificates",
+  domain: "registrar.university.edu"
+});
+
+console.log(`Sub issuer created with DID: ${subIssuer.did}`);
+```
+
+**Response:**
+```typescript
+{
+  did: string;        // Decentralized Identifier for the sub issuer
+  name: string;       // Human-readable name
+}
+```
+
+### List Sub Issuers
+
+Retrieve all sub issuers under your organization:
+
+```ts
+const subIssuers = await ezrah.subIssuers();
+```
+
+**Response:**
+```typescript
+SubIssuer[] // Array of sub issuer objects
+```
+
+### Issue Credentials with Sub Issuers
+
+When issuing encrypted SD-JWT credentials, you can specify which sub issuer should be used:
+
+```ts
+const claims = {
+  studentId: "12345",
+  degree: "Bachelor of Science",
+  major: "Computer Science",
+  graduationDate: "2024-05-15"
+};
+
+const credential = await ezrah.issueEncryptedSDJWT(
+  claims,
+  ['studentId', 'degree'], // Selective disclosure fields
+  [recipientPublicKey],
+  {
+    policy_control: true,
+    sub_issuer_did: "did:ezrah:registrar123" // Sub issuer DID
+  }
+);
+```
+
+**Benefits of Sub Issuers:**
+- **Delegated Authority**: Issue credentials under organizational hierarchy
+- **DID-based Identity**: Each sub issuer maintains its own decentralized identifier
+- **Selective Disclosure**: Full support for privacy-preserving SD-JWT credentials
+- **Organizational Structure**: Clear governance and trust relationships
+
+<Callout type="info">
+  Sub issuers inherit authentication and permissions from the parent organization. All API operations use the same organizational API key.
+</Callout>
 
 ---
 
@@ -215,7 +298,8 @@ const result = await ezrahCredsSDK.issueEncryptedSDJWT(
   disclosureFrame,
   endUserPublicKey,
   {
-    policy_control: false // default
+    policy_control: false, // default
+    sub_issuer_did: "did:ezrah:registrar123" // Optional: specify sub issuer
   }
 );
 ```

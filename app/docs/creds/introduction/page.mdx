@@ -1,79 +1,87 @@
 ---
+title: "Introduction to Decentralized Identity"
 description: "A comprehensive guide to decentralized identity, its technical foundations, real-world use cases, and how Ezrah provides secure, blockchain-powered identity solutions."
 ---
 
-import { Callout } from 'nextra/components'
-import { Cards, Image } from 'nextra/components'
-import { cloneElement } from 'react'
-
-export default function MdxLayout(props) {
-  return cloneElement(props.children, {
-    components: {
-      img: Image
-    }
-  })
-}
+import {Callout, Cards } from 'nextra/components'
 
 
+# Introduction to Decentralized Identity
 
-# Introduction to Decentralized Identity  
+<Callout type="warning">
+  Traditional identity systems create privacy risks, security vulnerabilities, and data monopolies that restrict users' control over their identities.
+</Callout>
 
+## The Problem with Centralized Identity
 
-## Overview  
+The digital world relies heavily on identity systems for authentication, authorization, and trust. However, most traditional identity systems are:
 
-The digital world relies heavily on identity systems for authentication, authorization, and trust. However, most traditional identity systems are centralized, controlled by corporations, governments, or third-party providers. This model creates privacy risks, security vulnerabilities, and data monopolies that restrict users’ control over their identities.
+- **Centralized** - Controlled by corporations, governments, or third-party providers
+- **Single Points of Failure** - If the central authority is compromised, all identities are at risk
+- **Privacy-Invasive** - Users have limited control over how their data is used
+- **Data Monopolies** - Large platforms accumulate vast amounts of personal information
 
-Decentralized Identity (**DID**) is a paradigm shift that eliminates central points of failure**, allowing individuals and organizations to own, control, and share their identities securely, without relying on a single authority.
+## The Decentralized Identity Solution
 
-At Ezrah we've created a blockchain-powered identity infrastructure that provides a self-sovereign, verifiable, and interoperable identity system, ensuring greater security, privacy, and autonomy in the digital world.
+**Decentralized Identity (DID)** is a paradigm shift that eliminates central points of failure, allowing individuals and organizations to own, control, and share their identities securely, without relying on a single authority.
 
----
+<Callout type="info">
+  At Ezrah, we've created a blockchain-powered identity infrastructure that provides a self-sovereign, verifiable, and interoperable identity system, ensuring greater security, privacy, and autonomy in the digital world.
+</Callout>
 
 ## Components of Decentralized Identity
 
-Decentralized identity (DID) is an identity framework that enables individuals and organizations to have self-sovereign control over their digital identities without relying on centralized authorities. The three major components of a decentralized identity system are as follows:
+Decentralized identity systems consist of three key participants that work together to create a trustless, secure ecosystem:
 
-### 1. **Issuers**
-Issuers are entities that create and sign Verifiable Credentials (VCs). These credentials contain claims about an identity, such as a university issuing a diploma or a government agency issuing a driver's license.
+<Cards>
+  <Cards.Card title="Issuers" href="#issuers">
+    Entities that create and sign verifiable credentials
+  </Cards.Card>
+  <Cards.Card title="Holders" href="#holders">
+    Individuals who receive, store, and present credentials
+  </Cards.Card>
+  <Cards.Card title="Verifiers" href="#verifiers">
+    Parties that validate and rely on presented credentials
+  </Cards.Card>
+</Cards>
 
-#### Responsibilities:
-- **Credential Creation**: Generates digital credentials that represent verified claims.
-- **Signing and Encryption**: Uses cryptographic keys to sign credentials, ensuring authenticity and integrity.
-- **Revocation Management**: Maintains mechanisms to revoke credentials if needed.
+### Issuers <span id="issuers" />
 
-#### Examples:
-- Government institutions issuing passports.
-- Universities providing diplomas.
-- Banks issuing financial credentials.
+Issuers are trusted entities that create and cryptographically sign Verifiable Credentials (VCs). These credentials contain verified claims about an identity.
 
-### 2. **Holders**
-Holders are individuals or entities that receive, store, and manage Verifiable Credentials. They control their digital identity and decide how and when to share their credentials.
+**Key Responsibilities:**
+- **Credential Creation** - Generate digital credentials for verified claims
+- **Cryptographic Signing** - Use private keys to ensure credential authenticity  
+- **Revocation Management** - Ability to revoke credentials when necessary
 
-#### Responsibilities:
-- **Credential Storage**: Uses digital identity wallets to securely store credentials.
-- **Selective Disclosure**: Chooses what information to share with verifiers.
-- **Authentication**: Proves control over credentials when interacting with verifiers.
+<Callout type="default">
+**Real-World Examples:** Government agencies issuing digital passports, universities providing degree certificates, banks issuing KYC credentials, employers creating professional certifications.
+</Callout>
 
-#### Examples:
-- A job applicant presenting a diploma to a potential employer.
-- A traveler proving identity using a digital passport.
-- A customer verifying age for online services without revealing their birth date.
+### Holders <span id="holders" />
 
-### 3. **Verifiers**
-Verifiers are entities that request, validate, and rely on Verifiable Credentials to make trust-based decisions. They use cryptographic methods to confirm the credentials’ authenticity without needing to contact the issuer directly.
+Holders are individuals or entities that receive, store, and manage their Verifiable Credentials. They maintain complete control over their digital identity.
 
-#### Responsibilities:
-- **Credential Verification**: Checks if credentials are valid and issued by a trusted authority.
-- **Authentication & Trust**: Ensures the credential holder is the rightful owner.
-- **Privacy-Preserving Verification**: Uses techniques like Zero-Knowledge Proofs to verify claims without exposing unnecessary information.
+**Key Responsibilities:**
+- **Secure Storage** - Use digital wallets to safely store credentials
+- **Selective Disclosure** - Choose exactly what information to share
+- **Proof of Control** - Demonstrate ownership of credentials during verification
 
-#### Examples:
-- Employers verifying educational credentials.
-- Financial institutions conducting KYC checks.
-- Online platforms validating identity for account access.
+<Callout type="default">
+**Privacy-First Approach:** Holders can prove they have a university degree without revealing their GPA, or verify they're over 21 without disclosing their exact birthdate.
+</Callout>
 
----
+### Verifiers <span id="verifiers"/>
+Verifiers are entities that request, validate, and make trust-based decisions using Verifiable Credentials. They can verify credentials without contacting the original issuer.
 
+**Key Responsibilities:**
+- **Credential Validation** - Verify authenticity and integrity cryptographically
+- **Trust Assessment** - Ensure the credential holder is the rightful owner
+- **Privacy-Preserving Checks** - Use Zero-Knowledge Proofs and selective disclosure
+
+<Callout type="default">
+**Instant Verification:** A potential employer can immediately verify a candidate's degree authenticity without waiting days for university confirmation.
+</Callout>
 
 ## Technical Building Blocks of Decentralized Identity
 

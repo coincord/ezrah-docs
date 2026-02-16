@@ -1,42 +1,55 @@
+---
+title: "Issue Credentials"
+description: "Learn how to issue and manage verifiable credentials using the Ezrah Creds platform"
+---
+
+import { Callout } from 'nextra/components'
+import { Steps } from 'nextra/components'
+
 # Issuing Credentials
 
-## Overview
-
-This section outlines the process of issuing credentials within the Ezrah Creds platform. It details how organizations can generate and manage verifiable credentials (VCs), ensuring secure and transparent identity verification while maintaining a decentralized approach to credential storage.
+<Callout type="info">
+  This guide explains how organizations can generate and manage verifiable credentials (VCs) using Ezrah Creds, ensuring secure and transparent identity verification with a decentralized approach.
+</Callout>
 
 ## Credential Issuance Workflow
 
-The credential issuance process follows a structured approach:
+<Steps>
+### Organization Registration
 
-1. **Organization Registration**
+Organizations must be registered within Ezrah to issue credentials. Each organization receives a unique Decentralized Identifier (DID) for cryptographically verifiable signing.
 
-    - Organizations must be registered within Ezrah to issue credentials.
-    - Each organization is assigned a Decentralized Identifier (DID) for verifiable signing.
-2. **Credential Generation**
+### Credential Generation
 
-    - The organization selects the credential type to issue.
-    - Relevant attributes (e.g., name, verification status, timestamp) are provided.
-    - The credential is signed cryptographically using the issuing organization’s DID.
-3. **Temporary Credential Record**
+- Select the credential type to issue
+- Provide relevant attributes (name, verification status, timestamp, etc.)
+- Credential is cryptographically signed using the organization's DID
 
-    - Ezrah Creds maintains a temporary record reflecting the issued credential.
-    - This temporary record allows for tracking issuance history but does not store the credential itself.
-4. **Credential Delivery**
+### Temporary Record Creation
 
-    - Recipients receive their verifiable credentials directly within their Ezrah Wallet.
-    - The holder maintains full control over their credentials without reliance on Ezrah for storage.
-5. **Verification and Revocation**
+Ezrah Creds maintains a temporary record for tracking issuance history while ensuring the credential itself is not stored centrally, preserving decentralization.
 
-    - Third parties can resolve the issuing organization’s DID to verify credential authenticity.
-    - Organizations can revoke credentials if needed, updating their status accordingly in the Ezrah system.
+### Credential Delivery
 
-## Viewing Issued Credentials
+Recipients receive their verifiable credentials directly in their Ezrah Wallet, maintaining full control without relying on Ezrah for storage.
 
-Organizations and users can track issued credentials through the Ezrah Creds platform. The platform provides:
+### Verification and Revocation
 
-- **Credential Issuance Log:** Displays a history of issued credentials and their statuses.
-- **Filtering and Search:** Enables users to find specific credentials by type, recipient, or date.
-- **Revocation Status:** Indicates if a credential remains valid or has been revoked.
+- Third parties resolve the issuing organization's DID to verify authenticity
+- Organizations can revoke credentials when necessary, updating status in the system
+</Steps>
+
+## Tracking Issued Credentials
+
+Organizations and users can monitor their credentials through the Ezrah Creds platform:
+
+- **📋 Credential Issuance Log** - Complete history of issued credentials and their statuses
+- **🔍 Filtering and Search** - Find specific credentials by type, recipient, or date
+- **⚠️ Revocation Status** - Real-time validation status of each credential
+
+<Callout type="warning">
+  **Important:** While Ezrah maintains issuance logs for convenience, the actual credentials are stored in holders' wallets, ensuring true self-sovereignty.
+</Callout>
 
 ## References
 
