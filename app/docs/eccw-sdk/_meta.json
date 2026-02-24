@@ -1,0 +1,18 @@
+{
+  "installation": {
+    "title": "Installation & Setup",
+    "display": 1
+  },
+  "configuration": {
+    "title": "Configuration",
+    "display": 2
+  },
+  "api-reference": {
+    "title": "API Reference",
+    "display": 3
+  },
+  "examples": {
+    "title": "Examples",
+    "display": 4
+  }
+}

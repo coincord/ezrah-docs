@@ -1,0 +1,157 @@
+# Installation & Setup
+
+## Installation
+
+Install the ECCW SDK using your preferred package manager:
+
+```bash npm2yarn
+npm install @coincord/eccw-sdk
+```
+
+## Basic Setup
+
+### Quick Start
+
+For most applications, you can get started quickly using the default environment configuration:
+
+```typescript
+import EzrahECCW, { createEnvConf } from '@coincord/eccw-sdk';
+
+// Initialize with environment configuration
+const client = new EzrahECCW(createEnvConf());
+
+// Start using the client
+const result = await client.someMethod();
+```
+
+### Manual Configuration
+
+For more control over the configuration, you can provide settings directly:
+
+```typescript
+import EzrahECCW from '@coincord/eccw-sdk';
+
+const client = new EzrahECCW({
+  api: 'your-api-endpoint.com',
+  partner_id: 'your-partner-id'
+});
+```
+
+### Configuration with Overrides
+
+You can also combine environment configuration with specific overrides:
+
+```typescript
+import EzrahECCW, { createEnvConf } from '@coincord/eccw-sdk';
+
+const client = new EzrahECCW(createEnvConf({
+  api: 'custom-endpoint.com',
+  partner_id: 'custom-partner-id'
+}));
+```
+
+## Platform-Specific Setup
+
+### Node.js / Web Applications
+
+For Node.js and web applications, create a `.env` file in your project root:
+
+```bash
+# Development and production API endpoints
+DEV_EZRAH_ECCW_BASE_URL="dev-eccw.ezrah.co"
+PROD_EZRAH_ECCW_BASE_URL="prod-eccw.ezrah.co"
+
+# Your partner ID for authentication
+EZRAH_ECCW_PARTNER_ID="your-partner-id"
+```
+
+### React Native
+
+React Native applications have additional configuration options to ensure compatibility across different environments.
+
+#### Option 1: Using react-native-config (Recommended)
+
+1. Install the configuration package:
+
+```bash
+npm install react-native-config
+```
+
+2. Create a `.env` file in your project root:
+
+```bash
+DEV_EZRAH_ECCW_BASE_URL=dev-eccw.ezrah.co
+PROD_EZRAH_ECCW_BASE_URL=prod-eccw.ezrah.co
+EZRAH_ECCW_PARTNER_ID=your-partner-id
+```
+
+3. Use the SDK as normal:
+
+```typescript
+import EzrahECCW, { createEnvConf } from '@coincord/eccw-sdk';
+
+const client = new EzrahECCW(createEnvConf());
+```
+
+#### Option 2: React Native Environment Variables
+
+Set platform-specific environment variables:
+
+```bash
+REACT_NATIVE_DEV_EZRAH_ECCW_BASE_URL=dev-eccw.ezrah.co
+REACT_NATIVE_PROD_EZRAH_ECCW_BASE_URL=prod-eccw.ezrah.co
+REACT_NATIVE_EZRAH_ECCW_PARTNER_ID=your-partner-id
+```
+
+## Environment Detection
+
+The SDK automatically detects your environment and selects the appropriate configuration:
+
+- **Development Mode**: Uses development URLs when:
+  - `NODE_ENV !== 'production'` (Node.js/Web)
+  - `global.__DEV__ === true` (React Native)
+
+- **Production Mode**: Uses production URLs when:
+  - `NODE_ENV === 'production'` (Node.js/Web)  
+  - `global.__DEV__ === false` (React Native)
+
+- **Fallback**: Defaults to `dev-eccw.ezrah.co` if no environment variables are configured
+
+## Configuration Precedence
+
+Configuration values are resolved in the following order (highest to lowest priority):
+
+1. **Direct Parameters**: Values passed directly to the `EzrahECCW` constructor
+2. **Override Parameters**: Values passed to `createEnvConf(overrides)`
+3. **Environment Variables**: Platform-specific environment variables
+4. **Default Fallbacks**: Built-in default values
+
+## Verification
+
+To verify your setup is working correctly, you can test the connection:
+
+```typescript
+import EzrahECCW, { createEnvConf } from '@coincord/eccw-sdk';
+
+async function testConnection() {
+  try {
+    const client = new EzrahECCW(createEnvConf());
+    
+    // Test the connection (replace with actual method)
+    const status = await client.getStatus();
+    console.log('Connection successful:', status);
+  } catch (error) {
+    console.error('Connection failed:', error);
+  }
+}
+
+testConnection();
+```
+
+## Next Steps
+
+Once you have the SDK installed and configured:
+
+1. **[Configuration Guide](/docs/eccw-sdk/configuration)** - Learn more about advanced configuration options
+2. **[API Reference](/docs/eccw-sdk/api-reference)** - Explore the complete API documentation
+3. **[Examples](/docs/eccw-sdk/examples)** - See practical implementation examples

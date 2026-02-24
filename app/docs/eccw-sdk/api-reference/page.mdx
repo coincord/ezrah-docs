@@ -1,0 +1,688 @@
+# API Reference
+
+This section provides comprehensive documentation for all classes, methods, and types available in the ECCW SDK.
+
+## Main Classes
+
+### EzrahECCW
+
+The main client class for interacting with the Ezrah ECCW service.
+
+#### Constructor
+
+```typescript
+constructor(config: ECCWConfig)
+```
+
+Creates a new instance of the ECCW client.
+
+**Parameters:**
+- `config`: Configuration object containing API endpoint, partner ID, and other options
+
+**Example:**
+```typescript
+import EzrahECCW, { createEnvConf } from '@coincord/eccw-sdk';
+
+const client = new EzrahECCW(createEnvConf());
+```
+
+#### Methods
+
+##### User Registration & Authentication Methods
+
+###### `registerUser(params: RegisterInputType): Promise<RegisterUserResponse | undefined>`
+
+Registers a new user in the ECCW system.
+
+**Parameters:**
+- `params`: Registration parameters containing public keys, identifier, and device metadata
+
+**Returns:** Promise resolving to registration response
+
+**Example:**
+```typescript
+const result = await client.registerUser({
+  puk: 'user-public-key',
+  recovery_puk: 'recovery-public-key',
+  identifier: 'user@example.com',
+  device_meta: { platform: 'web', version: '1.0.0' }
+});
+```
+
+###### `authQuery(params: AuthQueryInputType): Promise<AuthQueryResponse | undefined>`
+
+Initiates authentication query to get nonce and session.
+
+**Parameters:**
+- `params`: Object containing the DID to authenticate
+
+**Returns:** Promise resolving to authentication query response
+
+**Example:**
+```typescript
+const authResponse = await client.authQuery({
+  did: 'did:example:123'
+});
+```
+
+###### `verifySignature(params: SignatureVerifyInputType): Promise<SignatureVerifyResponse | undefined>`
+
+Verifies a signed message for authentication.
+
+**Parameters:**
+- `params`: Object containing signed message and session ID
+
+**Returns:** Promise resolving to signature verification response
+
+**Example:**
+```typescript
+const verifyResult = await client.verifySignature({
+  signedMessage: 'signed-message',
+  sessionid: 'session-123'
+});
+```
+
+###### `combineAuthQueryAndSignatureVerify(params: AuthQueryVerify): Promise<SignatureVerifyResponse | undefined>`
+
+Combines auth query and signature verification in a single operation.
+
+**Parameters:**
+- `params`: Object containing DID and private key for signing
+
+**Returns:** Promise resolving to signature verification response
+
+**Example:**
+```typescript
+const authResult = await client.combineAuthQueryAndSignatureVerify({
+  did: 'did:example:123',
+  privateKey: 'private-key-hex'
+});
+```
+
+##### Recovery Methods
+
+###### `recoveryProcesssor(input: RecoveryInput): Promise<RecoveryResult>`
+
+Processes account recovery using recovery keys.
+
+**Parameters:**
+- `input`: Recovery input containing recovery private key, new device pair, and identifier
+
+**Returns:** Promise resolving to recovery result with status and data
+
+**Example:**
+```typescript
+const recovery = await client.recoveryProcesssor({
+  recovery_pk: 'recovery-private-key',
+  new_device_pair: {
+    pk: 'new-device-private-key',
+    puk: 'new-device-public-key'
+  },
+  identifier: 'user@example.com'
+});
+```
+
+###### `resyncCredentialProcess(resync_creds: CredentialWrappedDeks, recovery: string, options: { access_token: string }): Promise<Credential[]>`
+
+Resyncs credentials after recovery process.
+
+**Parameters:**
+- `resync_creds`: Credential wrapped DEKs for resyncing
+- `recovery`: Recovery public key
+- `options`: Options containing access token
+
+**Returns:** Promise resolving to array of resynced credentials
+
+##### User & Credential Query Methods
+
+###### `user(params: string, accessToken: string): Promise<User | undefined>`
+
+Retrieves user information by DID.
+
+**Parameters:**
+- `params`: User DID
+- `accessToken`: Valid access token for authentication
+
+**Returns:** Promise resolving to user object
+
+**Example:**
+```typescript
+const user = await client.user('did:example:123', 'access-token');
+```
+
+###### `credential(params: string, accessToken: string): Promise<Credential | undefined>`
+
+Retrieves a single credential by its ID.
+
+**Parameters:**
+- `params`: Credential ID
+- `accessToken`: Valid access token for authentication
+
+**Returns:** Promise resolving to credential object
+
+**Example:**
+```typescript
+const credential = await client.credential('credential-id-123', 'access-token');
+```
+
+###### `credentialsAll(params: string, accessToken: string): Promise<Credential[] | undefined>`
+
+Retrieves all credentials for a user.
+
+**Parameters:**
+- `params`: User DID
+- `accessToken`: Valid access token for authentication
+
+**Returns:** Promise resolving to array of credentials
+
+**Example:**
+```typescript
+const credentials = await client.credentialsAll('did:example:123', 'access-token');
+```
+
+##### Credential Decryption & Processing Methods
+
+###### `decryptDisClosure(encyptedDisclosure: EncryptedDisclosures, privateKeyHexString: string): Promise<Disclosure[]>`
+
+Decrypts encrypted disclosures from credentials.
+
+**Parameters:**
+- `encyptedDisclosure`: Encrypted disclosure data
+- `privateKeyHexString`: Private key in hex format for decryption
+
+**Returns:** Promise resolving to array of decrypted disclosures
+
+**Example:**
+```typescript
+const disclosures = await client.decryptDisClosure(
+  encryptedDisclosures,
+  'private-key-hex'
+);
+```
+
+###### `decryptAndReformCredential(input: DecryptionInput): Promise<DecryptionResult>`
+
+Decrypts and reforms multiple credentials.
+
+**Parameters:**
+- `input`: Object containing credentials array and private key
+
+**Returns:** Promise resolving to decrypted credentials and failures
+
+**Example:**
+```typescript
+const result = await client.decryptAndReformCredential({
+  credentials: credentialArray,
+  privateKeyhex: 'private-key-hex'
+});
+
+console.log(`Decrypted: ${result.decrypted.length}`);
+console.log(`Failed: ${result.failed.length}`);
+```
+
+##### Presentation Methods
+
+###### `credentialPresentation(params: PresentationRequest, accessToken: string, metadata?: object): Promise<PresentationResponse | undefined>`
+
+Submits credential presentation for verification.
+
+**Parameters:**
+- `params`: Presentation request parameters
+- `accessToken`: Valid access token for authentication
+- `metadata`: Optional metadata for the presentation
+
+**Returns:** Promise resolving to presentation response
+
+**Example:**
+```typescript
+const presentation = await client.credentialPresentation({
+  oob: 'out-of-band-data',
+  credential_ids: ['cred-1', 'cred-2'],
+  session_id: 'session-123',
+  creds_disclosures: { disclosures: disclosureArray }
+}, 'access-token');
+```
+
+##### Utility Methods
+
+###### `getClient(): GraphqlRequest`
+
+Returns the GraphQL client instance.
+
+**Returns:** GraphQL client instance
+
+###### `setNonce(nonce: string): void`
+
+Sets the nonce for authentication.
+
+**Parameters:**
+- `nonce`: Authentication nonce
+
+###### `setSession(session: string): void`
+
+Sets the session ID for authentication.
+
+**Parameters:**
+- `session`: Session identifier
+
+
+## Utility Functions
+
+### createEnvConf
+
+Creates a configuration object from environment variables.
+
+```typescript
+function createEnvConf(overrides?: Partial<ECCWConfig>): ECCWConfig
+```
+
+**Parameters:**
+- `overrides` (optional): Configuration overrides
+
+**Returns:** Complete configuration object
+
+**Example:**
+```typescript
+import { createEnvConf } from '@coincord/eccw-sdk';
+
+const config = createEnvConf({
+  timeout: 45000
+});
+```
+
+## Type Definitions
+
+### EnvConf
+
+Configuration interface for the ECCW client.
+
+```typescript
+interface EnvConf {
+  api: string;                    // API base URL
+  partner_id: string;             // Partner identification
+}
+```
+
+### RegisterInputType
+
+User registration input parameters.
+
+```typescript
+interface RegisterInputType {
+  puk: string;                   // User public key
+  recovery_puk: string;          // Recovery public key  
+  identifier: string;            // User identifier (email, etc.)
+  device_meta: string;           // Device metadata
+}
+```
+
+### RegisterUserResponse
+
+User registration response.
+
+```typescript
+interface RegisterUserResponse {
+  did: string;                   // Decentralized identifier
+  meta_data: {
+    device: {
+      device_name: string;       // Device name
+      os: string;               // Operating system
+    };
+  };
+}
+```
+
+### AuthQueryInputType
+
+Authentication query input.
+
+```typescript
+interface AuthQueryInputType {
+  did: string;                   // Decentralized identifier
+}
+```
+
+### AuthQueryResponse
+
+Authentication query response.
+
+```typescript
+interface AuthQueryResponse {
+  nonce: string;                 // Authentication nonce
+  session: string;               // Session identifier
+}
+```
+
+### SignatureVerifyInputType
+
+Signature verification input.
+
+```typescript
+interface SignatureVerifyInputType {
+  signedMessage: string;         // Signed message
+  sessionid: string;             // Session identifier
+}
+```
+
+### SignatureVerifyResponse
+
+Signature verification response.
+
+```typescript
+interface SignatureVerifyResponse {
+  refreshToken: string;          // JWT refresh token
+  accessToken: string;           // JWT access token
+}
+```
+
+### AuthQueryVerify
+
+Combined authentication and verification input.
+
+```typescript
+interface AuthQueryVerify {
+  did: string;                   // Decentralized identifier
+  privateKey: string;            // Private key for signing
+}
+```
+
+### User
+
+User information interface.
+
+```typescript
+interface User {
+  id: string;                    // Unique identifier
+  did: string;                   // Decentralized identifier
+  status: string;                // User status
+  createdAt: string;             // Creation timestamp
+  updatedAt: string;             // Update timestamp
+  organizationId: string;        // Organization ID
+  organization: Organization;    // Organization details
+  devices: Device[];             // Associated devices
+  credentials: Credential[];     // User credentials
+  deviceAuthRequests: DeviceAuthRequest[]; // Device auth requests
+}
+```
+
+### Credential
+
+Digital credential interface.
+
+```typescript
+interface Credential {
+  id: string;                    // Unique identifier
+  userId: string;                // Owner user ID
+  user: User;                    // User object
+  credential_hash: string;       // Credential hash
+  credential_enconded: string;   // Encoded credential
+  w3c_credential: string;        // W3C credential format
+  sd_jwt_credential: string;     // SD-JWT credential format
+  is_dek_credential: boolean;    // Is DEK encrypted
+  recipients: string;            // Recipients JSON string
+  credential_protocol: CredentialProtocolType; // Protocol type
+  issuer: string;                // Issuer identifier
+  metadata: string;              // Metadata JSON string
+  credentialSubject: string;     // Subject claims
+  expirationDate: string;        // Expiration date
+  issuedAt: string;              // Issuance date
+  createdAt: string;             // Creation timestamp
+  CredentialPresentation: CredentialPresentation[]; // Presentations
+}
+```
+
+### DeCrytedCredential
+
+Decrypted credential with disclosed information.
+
+```typescript
+interface DeCrytedCredential extends Credential {
+  decrypted_disclosure?: Disclosure[]; // Decrypted disclosures
+}
+```
+
+### Disclosure
+
+Selective disclosure structure.
+
+```typescript
+interface Disclosure {
+  _digest: string;               // Disclosure digest
+  _encoded: string;              // Encoded disclosure
+  salt: string;                  // Salt value
+  key: string;                   // Claim key
+  value: any;                    // Claim value
+}
+```
+
+### CredentialDisclosure
+
+Credential-specific disclosures.
+
+```typescript
+interface CredentialDisclosure {
+  credential_id: string;         // Credential identifier
+  disclosure_structure: Disclosure[]; // Disclosure array
+}
+```
+
+### PresentationRequest
+
+Credential presentation request.
+
+```typescript
+interface PresentationRequest {
+  oob: any;                      // Out-of-band data
+  credential_ids: string[];      // Credential IDs to present
+  session_id: string;            // Presentation session ID
+  creds_disclosures: {
+    disclosures: CredentialDisclosure[]; // Selective disclosures
+  };
+}
+```
+
+### PresentationResponse
+
+Credential presentation response.
+
+```typescript
+interface PresentationResponse {
+  credential_id: string;         // Presented credential ID
+  metadata: JSON;                // Presentation metadata
+}
+```
+
+### WrappedDek
+
+Wrapped Data Encryption Key structure.
+
+```typescript
+interface WrappedDek {
+  ciphertext: string;            // Encrypted content
+  iv: string;                    // Initialization vector
+  ephemeralPublickKey: string;   // Ephemeral public key
+  recipient_pub_key?: string;    // Recipient public key
+  alg: "X25519-AES-GCM";        // Algorithm
+  enc: "AES-GCM";               // Encryption method
+}
+```
+
+### WrappedDeks
+
+Collection of wrapped DEKs by recipient.
+
+```typescript
+interface WrappedDeks {
+  [recipientid: string]: WrappedDek; // Recipient to DEK mapping
+}
+```
+
+### CredentialWrappedDeks
+
+Mapping of credentials to their wrapped DEKs.
+
+```typescript
+interface CredentialWrappedDeks {
+  [credential_id: string]: WrappedDeks; // Credential to DEKs mapping
+}
+```
+
+### EncryptedDisclosures
+
+Encrypted selective disclosure data.
+
+```typescript
+interface EncryptedDisclosures {
+  ciphertext: string;            // Encrypted content
+  iv: string;                    // Initialization vector
+  ephemeralPubKey: string;       // Ephemeral public key
+  alg: string;                   // Algorithm
+  enc: string;                   // Encryption method
+}
+```
+
+### Organization
+
+Organization information.
+
+```typescript
+interface Organization {
+  id: string;                    // Unique identifier
+  name: string;                  // Organization name
+  domain: string;                // Domain name
+  alias: string;                 // Organization alias
+  slug: string;                  // URL slug
+  createdAt: string;             // Creation timestamp
+  users: User[];                 // Organization users
+}
+```
+
+### Device
+
+Device information.
+
+```typescript
+interface Device {
+  id: string;                    // Unique identifier
+  userId: string;                // Owner user ID
+  dkeyPublic: string;            // Device public key
+  deviceName: string;            // Device name
+  deviceType: string;            // Device type
+  osVersion: string;             // OS version
+  pushToken: string;             // Push notification token
+  authorized: boolean;           // Authorization status
+  lastSeen: string;              // Last seen timestamp
+  createdAt: string;             // Creation timestamp
+  user: User;                    // User object
+  DeviceSession: DeviceSession;  // Device session
+}
+```
+
+## Error Handling
+
+The SDK uses standard JavaScript errors with descriptive messages for different scenarios:
+
+### General Error Handling
+
+All methods may throw standard `Error` objects with descriptive messages:
+
+```typescript
+try {
+  const result = await client.registerUser(params);
+} catch (error) {
+  console.error('Registration failed:', error.message);
+}
+```
+
+### Common Error Scenarios
+
+#### Authentication Errors
+- "No data returned from the server" - API response is empty
+- "Error in auth query" - Authentication query failed
+- "Error verifying signature" - Signature verification failed
+
+#### Credential Errors  
+- "Error fetching credentials" - Credential retrieval failed
+- "Error fetching all credentials" - Bulk credential retrieval failed
+- "Error fetching credential presentation" - Presentation request failed
+
+#### Recovery Errors
+- "Unable to retrieve nonce" - Recovery nonce generation failed
+- "Signature couldn't be confirmed" - Recovery signature verification failed
+- "No available key to decrypt this credential" - Missing decryption keys
+- "All credential resync operations failed" - Complete resync failure
+
+#### Network Errors
+- GraphQL request errors are propagated from the underlying client
+- Connection timeouts and network failures
+
+### Error Handling Best Practices
+
+```typescript
+// Always wrap SDK calls in try-catch blocks
+async function safeCredentialFetch(credentialId: string, accessToken: string) {
+  try {
+    const credential = await client.credential(credentialId, accessToken);
+    return { success: true, data: credential };
+  } catch (error) {
+    console.error('Credential fetch failed:', error.message);
+    return { success: false, error: error.message };
+  }
+}
+
+// Handle recovery operations with detailed error reporting
+async function safeRecovery(recoveryInput: RecoveryInput) {
+  try {
+    const result = await client.recoveryProcesssor(recoveryInput);
+    
+    if (result.status) {
+      console.log('Recovery successful');
+      return result;
+    } else {
+      console.error('Recovery failed:', result.error);
+      return result;
+    }
+  } catch (error) {
+    console.error('Recovery process error:', error.message);
+    return { status: false, error: error.message };
+  }
+}
+
+// Handle decryption with failure tracking
+async function safeDecryption(credentials: Credential[], privateKey: string) {
+  try {
+    const result = await client.decryptAndReformCredential({
+      credentials,
+      privateKeyhex: privateKey
+    });
+    
+    console.log(`Successfully decrypted: ${result.decrypted.length}`);
+    
+    if (result.failed.length > 0) {
+      console.warn('Some credentials failed to decrypt:');
+      result.failed.forEach(failure => {
+        console.warn(`- ${failure.credential.id}: ${failure.error}`);
+      });
+    }
+    
+    return result;
+  } catch (error) {
+    console.error('Decryption process failed:', error.message);
+    throw error;
+  }
+}
+```
+
+## Best Practices
+
+1. **Always handle errors** - Network operations can fail
+2. **Use TypeScript** - Leverage full type safety
+3. **Cache credentials** - Avoid unnecessary API calls
+4. **Verify credentials** - Always verify before trusting
+5. **Handle expiration** - Check credential expiration dates
+6. **Secure storage** - Store sensitive data securely
+7. **Update regularly** - Keep the SDK updated
+
+## Migration Notes
+
+When upgrading between versions, check the [changelog](https://github.com/ezrah/eccw-sdk/blob/main/CHANGELOG.md) for breaking changes and migration instructions.

@@ -1,0 +1,266 @@
+# Configuration
+
+The ECCW SDK provides flexible configuration options to adapt to different environments and deployment scenarios. This guide covers all available configuration methods and best practices.
+
+## Configuration Methods
+
+### Environment-Based Configuration
+
+The recommended approach uses the `createEnvConf()` function, which automatically reads from environment variables:
+
+```typescript
+import EzrahECCW, { createEnvConf } from '@coincord/eccw-sdk';
+
+// Automatic environment detection
+const client = new EzrahECCW(createEnvConf());
+```
+
+### Manual Configuration
+
+For complete control, provide configuration directly:
+
+```typescript
+import EzrahECCW from '@coincord/eccw-sdk';
+
+const client = new EzrahECCW({
+  api: 'your-api-endpoint.com',
+  partner_id: 'your-partner-id',
+  timeout: 30000,
+  retries: 3
+});
+```
+
+### Hybrid Configuration
+
+Combine environment variables with specific overrides:
+
+```typescript
+import EzrahECCW, { createEnvConf } from '@coincord/eccw-sdk';
+
+const client = new EzrahECCW(createEnvConf({
+  api: 'custom-endpoint.com',
+  timeout: 45000  // Override default timeout
+}));
+```
+
+## Environment Variables
+
+### Node.js and Web Applications
+
+```bash
+# API Endpoints
+DEV_EZRAH_ECCW_BASE_URL="dev-eccw.ezrah.co"
+PROD_EZRAH_ECCW_BASE_URL="prod-eccw.ezrah.co"
+
+# Authentication
+EZRAH_ECCW_PARTNER_ID="your-partner-id"
+
+# Optional: Additional settings
+EZRAH_ECCW_TIMEOUT="30000"
+EZRAH_ECCW_RETRIES="3"
+```
+
+### React Native Applications
+
+#### Standard Environment Variables
+
+```bash
+# For React Native without react-native-config
+REACT_NATIVE_DEV_EZRAH_ECCW_BASE_URL=dev-eccw.ezrah.co
+REACT_NATIVE_PROD_EZRAH_ECCW_BASE_URL=prod-eccw.ezrah.co
+REACT_NATIVE_EZRAH_ECCW_PARTNER_ID=your-partner-id
+```
+
+#### With react-native-config
+
+```bash
+# Standard .env file (works with react-native-config)
+DEV_EZRAH_ECCW_BASE_URL=dev-eccw.ezrah.co
+PROD_EZRAH_ECCW_BASE_URL=prod-eccw.ezrah.co
+EZRAH_ECCW_PARTNER_ID=your-partner-id
+```
+
+## Configuration Options
+
+### Core Settings
+
+| Option | Type | Description | Default |
+|--------|------|-------------|---------|
+| `api` | `string` | API base URL (without /graphql) | Environment-dependent |
+| `partner_id` | `string` | Your partner ID for authentication | Required |
+| `timeout` | `number` | Request timeout in milliseconds | `30000` |
+| `retries` | `number` | Number of retry attempts | `3` |
+
+### Advanced Settings
+
+| Option | Type | Description | Default |
+|--------|------|-------------|---------|
+| `graphql_endpoint` | `string` | Full GraphQL endpoint URL | `${api}/graphql` |
+| `encryption_key` | `string` | Custom encryption key | Auto-generated |
+| `debug` | `boolean` | Enable debug logging | `false` |
+
+## Environment Detection Logic
+
+The SDK determines the environment using the following logic:
+
+### Node.js and Web
+```typescript
+const isDevelopment = process.env.NODE_ENV !== 'production';
+const apiUrl = isDevelopment 
+  ? process.env.DEV_EZRAH_ECCW_BASE_URL 
+  : process.env.PROD_EZRAH_ECCW_BASE_URL;
+```
+
+### React Native
+```typescript
+const isDevelopment = global.__DEV__ === true;
+const apiUrl = isDevelopment
+  ? Config.DEV_EZRAH_ECCW_BASE_URL || process.env.REACT_NATIVE_DEV_EZRAH_ECCW_BASE_URL
+  : Config.PROD_EZRAH_ECCW_BASE_URL || process.env.REACT_NATIVE_PROD_EZRAH_ECCW_BASE_URL;
+```
+
+## Configuration Examples
+
+### Development Environment
+
+```typescript
+// .env
+DEV_EZRAH_ECCW_BASE_URL=localhost:3000
+EZRAH_ECCW_PARTNER_ID=dev-partner-123
+EZRAH_ECCW_DEBUG=true
+
+// Code
+const client = new EzrahECCW(createEnvConf({
+  debug: true,
+  timeout: 5000  // Shorter timeout for dev
+}));
+```
+
+### Production Environment
+
+```typescript
+// .env.production
+PROD_EZRAH_ECCW_BASE_URL=prod-eccw.ezrah.co
+EZRAH_ECCW_PARTNER_ID=prod-partner-456
+
+// Code
+const client = new EzrahECCW(createEnvConf({
+  retries: 5,  // More retries for production
+  timeout: 60000  // Longer timeout for prod
+}));
+```
+
+### Testing Environment
+
+```typescript
+// For unit tests
+const testClient = new EzrahECCW({
+  api: 'localhost:3001',
+  partner_id: 'test-partner',
+  timeout: 1000,
+  debug: true
+});
+```
+
+## Configuration Validation
+
+The SDK validates configuration on initialization:
+
+```typescript
+try {
+  const client = new EzrahECCW(createEnvConf());
+  console.log('Configuration valid');
+} catch (error) {
+  if (error.message.includes('partner_id')) {
+    console.error('Partner ID is required');
+  }
+  if (error.message.includes('api')) {
+    console.error('API endpoint is required');
+  }
+}
+```
+
+## Security Best Practices
+
+### Environment Variables
+- Never commit sensitive values to version control
+- Use different partner IDs for different environments
+- Rotate credentials regularly
+
+### Configuration Files
+```bash
+# Add to .gitignore
+.env
+.env.local
+.env.production
+config/secrets.js
+```
+
+### Runtime Security
+```typescript
+// Don't log sensitive configuration
+const client = new EzrahECCW(createEnvConf());
+
+// ❌ Don't do this
+console.log(client.config);
+
+// ✅ Do this instead
+console.log(`Connected to: ${client.config.api}`);
+```
+
+## Troubleshooting
+
+### Common Issues
+
+**Missing Partner ID**
+```
+Error: partner_id is required for authentication
+```
+Solution: Set `EZRAH_ECCW_PARTNER_ID` environment variable
+
+**API Endpoint Not Found**
+```
+Error: Unable to determine API endpoint
+```
+Solution: Set appropriate `*_EZRAH_ECCW_BASE_URL` variables
+
+**React Native Configuration Issues**
+```
+Error: Environment variables not found
+```
+Solution: Ensure `react-native-config` is properly installed and configured
+
+### Debug Mode
+
+Enable debug mode to troubleshoot configuration issues:
+
+```typescript
+const client = new EzrahECCW(createEnvConf({
+  debug: true
+}));
+
+// This will log configuration details (without sensitive data)
+```
+
+## Migration Guide
+
+### From Version 1.x to 2.x
+
+If migrating from an older version:
+
+```typescript
+// Old way (deprecated)
+const client = new EzrahECCW('api-endpoint', 'partner-id');
+
+// New way
+const client = new EzrahECCW({
+  api: 'api-endpoint',
+  partner_id: 'partner-id'
+});
+```
+
+## Next Steps
+
+- **[API Reference](/docs/eccw-sdk/api-reference)** - Explore available methods and types
+- **[Examples](/docs/eccw-sdk/examples)** - See configuration in action
+- **[Troubleshooting](/docs/eccw-sdk/troubleshooting)** - Common issues and solutions

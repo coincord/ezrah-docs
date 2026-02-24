@@ -1,0 +1,676 @@
+# Examples
+
+This section provides practical examples of using the ECCW SDK in real-world scenarios.
+
+## Basic Usage
+
+### Initializing the Client
+
+```typescript
+import EzrahECCW, { createEnvConf } from '@coincord/eccw-sdk';
+
+// Using environment configuration
+const client = new EzrahECCW(createEnvConf());
+
+// With custom configuration
+const customClient = new EzrahECCW({
+  api: 'your-api-endpoint.com',
+  partner_id: 'your-partner-id',
+  timeout: 30000
+});
+```
+
+## Authentication Examples
+
+### Basic Authentication
+
+```typescript
+import EzrahECCW, { createEnvConf } from '@coincord/eccw-sdk';
+
+async function authenticateUser() {
+  const client = new EzrahECCW(createEnvConf());
+  
+  try {
+    const result = await client.authenticate({
+      username: 'user@example.com',
+      password: 'secure-password'
+    });
+    
+    if (result.success) {
+      console.log('Authentication successful');
+      console.log('Token expires at:', result.expires_at);
+      
+      // Store token for subsequent requests
+      localStorage.setItem('auth_token', result.token);
+    }
+  } catch (error) {
+    console.error('Authentication failed:', error.message);
+  }
+}
+```
+
+### Multi-Factor Authentication
+
+```typescript
+async function authenticateWithMFA() {
+  const client = new EzrahECCW(createEnvConf());
+  
+  try {
+    const result = await client.authenticate({
+      username: 'user@example.com',
+      password: 'secure-password',
+      mfa_token: '123456' // From authenticator app
+    });
+    
+    console.log('MFA authentication successful');
+  } catch (error) {
+    console.error('MFA authentication failed:', error.message);
+  }
+}
+```
+
+## Credential Management Examples
+
+### Creating Credentials
+
+```typescript
+async function createIdentityCredential() {
+  const client = new EzrahECCW(createEnvConf());
+  
+  try {
+    const credential = await client.createCredential({
+      type: 'IdentityCredential',
+      subject: 'did:example:user123',
+      claims: {
+        name: 'John Doe',
+        email: 'john.doe@example.com',
+        dateOfBirth: '1990-01-15',
+        nationality: 'US'
+      },
+      expires_at: new Date('2025-12-31'),
+      metadata: {
+        issueReason: 'Identity verification',
+        department: 'Customer Services'
+      }
+    });
+    
+    console.log('Credential created:', credential.id);
+    console.log('Issued at:', credential.issued_at);
+    
+    return credential;
+  } catch (error) {
+    console.error('Failed to create credential:', error.message);
+    throw error;
+  }
+}
+```
+
+### Professional License Credential
+
+```typescript
+async function createProfessionalLicense() {
+  const client = new EzrahECCW(createEnvConf());
+  
+  const credential = await client.createCredential({
+    type: 'ProfessionalLicenseCredential',
+    subject: 'did:example:doctor456',
+    claims: {
+      licenseNumber: 'MD-12345',
+      licenseType: 'Medical Doctor',
+      issuingAuthority: 'State Medical Board',
+      validFrom: '2020-06-01',
+      validUntil: '2025-05-31',
+      specializations: ['Cardiology', 'Internal Medicine']
+    }
+  });
+  
+  return credential;
+}
+```
+
+### Retrieving Credentials
+
+```typescript
+async function getCredentialById(credentialId: string) {
+  const client = new EzrahECCW(createEnvConf());
+  
+  try {
+    const credential = await client.getCredential(credentialId);
+    
+    console.log('Credential type:', credential.type);
+    console.log('Subject:', credential.subject);
+    console.log('Status:', credential.status);
+    console.log('Claims:', credential.claims);
+    
+    return credential;
+  } catch (error) {
+    if (error.code === 'CREDENTIAL_NOT_FOUND') {
+      console.log('Credential not found');
+    } else {
+      console.error('Error retrieving credential:', error.message);
+    }
+    return null;
+  }
+}
+```
+
+### Listing and Filtering Credentials
+
+```typescript
+async function listUserCredentials(userDid: string) {
+  const client = new EzrahECCW(createEnvConf());
+  
+  try {
+    // Get all active credentials for a user
+    const credentials = await client.listCredentials({
+      subject: userDid,
+      status: 'active',
+      limit: 50
+    });
+    
+    console.log(`Found ${credentials.length} active credentials`);
+    
+    // Group by type
+    const byType = credentials.reduce((acc, cred) => {
+      if (!acc[cred.type]) acc[cred.type] = [];
+      acc[cred.type].push(cred);
+      return acc;
+    }, {} as Record<string, any[]>);
+    
+    Object.entries(byType).forEach(([type, creds]) => {
+      console.log(`${type}: ${creds.length} credentials`);
+    });
+    
+    return credentials;
+  } catch (error) {
+    console.error('Error listing credentials:', error.message);
+    return [];
+  }
+}
+```
+
+### Filtering by Date Range
+
+```typescript
+async function getRecentCredentials(days: number = 30) {
+  const client = new EzrahECCW(createEnvConf());
+  
+  const cutoffDate = new Date();
+  cutoffDate.setDate(cutoffDate.getDate() - days);
+  
+  const credentials = await client.listCredentials({
+    issuedAfter: cutoffDate,
+    status: 'active'
+  });
+  
+  console.log(`Found ${credentials.length} credentials issued in the last ${days} days`);
+  return credentials;
+}
+```
+
+## Verification Examples
+
+### Basic Credential Verification
+
+```typescript
+async function verifyCredential(credential: Credential) {
+  const client = new EzrahECCW(createEnvConf());
+  
+  try {
+    const result = await client.verifyCredential(credential);
+    
+    if (result.isValid) {
+      console.log('✅ Credential is valid');
+      console.log('Verified at:', result.verifiedAt);
+    } else {
+      console.log('❌ Credential verification failed');
+      console.log('Errors:', result.errors);
+      console.log('Warnings:', result.warnings);
+    }
+    
+    // Check specific validation details
+    if (!result.details.signatureValid) {
+      console.log('⚠️ Invalid signature detected');
+    }
+    
+    if (!result.details.expirationValid) {
+      console.log('⚠️ Credential has expired');
+    }
+    
+    if (!result.details.issuerTrusted) {
+      console.log('⚠️ Issuer is not in trusted list');
+    }
+    
+    return result;
+  } catch (error) {
+    console.error('Verification error:', error.message);
+    return null;
+  }
+}
+```
+
+### Batch Verification
+
+```typescript
+async function verifyMultipleCredentials(credentials: Credential[]) {
+  const client = new EzrahECCW(createEnvConf());
+  
+  const results = await Promise.allSettled(
+    credentials.map(cred => client.verifyCredential(cred))
+  );
+  
+  const validCredentials = [];
+  const invalidCredentials = [];
+  
+  results.forEach((result, index) => {
+    if (result.status === 'fulfilled' && result.value.isValid) {
+      validCredentials.push(credentials[index]);
+    } else {
+      invalidCredentials.push({
+        credential: credentials[index],
+        error: result.status === 'rejected' ? result.reason : result.value.errors
+      });
+    }
+  });
+  
+  console.log(`✅ Valid credentials: ${validCredentials.length}`);
+  console.log(`❌ Invalid credentials: ${invalidCredentials.length}`);
+  
+  return { validCredentials, invalidCredentials };
+}
+```
+
+## Wallet Management Examples
+
+### Checking Wallet Status
+
+```typescript
+async function checkWalletHealth() {
+  const client = new EzrahECCW(createEnvConf());
+  
+  try {
+    const status = await client.getWalletStatus();
+    
+    console.log('Wallet Status Report:');
+    console.log(`- ID: ${status.id}`);
+    console.log(`- Owner: ${status.owner}`);
+    console.log(`- Credentials: ${status.credentialCount}`);
+    console.log(`- Last Sync: ${status.lastSync}`);
+    console.log(`- Storage: ${status.storageUsed}/${status.storageLimit} bytes`);
+    console.log(`- Online: ${status.isOnline ? '🟢' : '🔴'}`);
+    
+    // Check storage usage
+    const usagePercent = (status.storageUsed / status.storageLimit) * 100;
+    if (usagePercent > 80) {
+      console.log('⚠️ Storage usage is high:', `${usagePercent.toFixed(1)}%`);
+    }
+    
+    return status;
+  } catch (error) {
+    console.error('Failed to get wallet status:', error.message);
+    return null;
+  }
+}
+```
+
+### Synchronizing Wallet
+
+```typescript
+async function performWalletSync() {
+  const client = new EzrahECCW(createEnvConf());
+  
+  try {
+    console.log('Starting wallet synchronization...');
+    
+    const result = await client.syncWallet();
+    
+    if (result.success) {
+      console.log('✅ Sync completed successfully');
+      console.log(`- Updated: ${result.updatedCount} items`);
+      console.log(`- Added: ${result.addedCount} items`);
+      console.log(`- Removed: ${result.removedCount} items`);
+      
+      if (result.conflictCount > 0) {
+        console.log(`⚠️ Conflicts: ${result.conflictCount} items need manual resolution`);
+      }
+    } else {
+      console.log('❌ Sync failed');
+      result.errors.forEach(error => console.log(`  - ${error}`));
+    }
+    
+    return result;
+  } catch (error) {
+    console.error('Sync error:', error.message);
+    return null;
+  }
+}
+```
+
+## Error Handling Examples
+
+### Comprehensive Error Handling
+
+```typescript
+import { 
+  ECCWError, 
+  AuthenticationError, 
+  CredentialError, 
+  NetworkError 
+} from '@coincord/eccw-sdk';
+
+async function robustCredentialOperation(credentialId: string) {
+  const client = new EzrahECCW(createEnvConf());
+  
+  try {
+    const credential = await client.getCredential(credentialId);
+    const verification = await client.verifyCredential(credential);
+    
+    return { credential, verification };
+  } catch (error) {
+    // Handle specific error types
+    if (error instanceof AuthenticationError) {
+      console.log('Authentication required - redirecting to login');
+      // Redirect to login page
+      return null;
+    }
+    
+    if (error instanceof CredentialError) {
+      if (error.code === 'CREDENTIAL_NOT_FOUND') {
+        console.log('Credential not found, it may have been deleted');
+      } else if (error.code === 'CREDENTIAL_EXPIRED') {
+        console.log('Credential has expired');
+      }
+      return null;
+    }
+    
+    if (error instanceof NetworkError) {
+      if (error.statusCode >= 500) {
+        console.log('Server error - retrying in 5 seconds...');
+        await new Promise(resolve => setTimeout(resolve, 5000));
+        // Retry logic here
+      } else {
+        console.log('Client error:', error.statusCode);
+      }
+      return null;
+    }
+    
+    // Handle unknown errors
+    console.error('Unknown error:', error);
+    throw error;
+  }
+}
+```
+
+### Retry Logic
+
+```typescript
+async function retryableOperation<T>(
+  operation: () => Promise<T>,
+  maxRetries: number = 3,
+  delayMs: number = 1000
+): Promise<T> {
+  let lastError: Error;
+  
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      return await operation();
+    } catch (error) {
+      lastError = error;
+      
+      if (error instanceof NetworkError && error.statusCode >= 500) {
+        if (attempt < maxRetries) {
+          console.log(`Attempt ${attempt} failed, retrying in ${delayMs}ms...`);
+          await new Promise(resolve => setTimeout(resolve, delayMs));
+          delayMs *= 2; // Exponential backoff
+          continue;
+        }
+      }
+      
+      // Don't retry for client errors or non-network errors
+      throw error;
+    }
+  }
+  
+  throw lastError!;
+}
+
+// Usage
+async function reliableCredentialFetch(id: string) {
+  const client = new EzrahECCW(createEnvConf());
+  
+  return retryableOperation(() => client.getCredential(id));
+}
+```
+
+## React Native Specific Examples
+
+### React Native Setup
+
+```typescript
+// App.tsx
+import React, { useEffect, useState } from 'react';
+import EzrahECCW, { createEnvConf } from '@coincord/eccw-sdk';
+
+export default function App() {
+  const [client, setClient] = useState<EzrahECCW | null>(null);
+  const [isReady, setIsReady] = useState(false);
+  
+  useEffect(() => {
+    initializeSDK();
+  }, []);
+  
+  const initializeSDK = async () => {
+    try {
+      const eccwClient = new EzrahECCW(createEnvConf({
+        timeout: 45000 // Longer timeout for mobile
+      }));
+      
+      setClient(eccwClient);
+      setIsReady(true);
+      
+      console.log('ECCW SDK initialized successfully');
+    } catch (error) {
+      console.error('Failed to initialize ECCW SDK:', error);
+    }
+  };
+  
+  if (!isReady) {
+    return <LoadingScreen />;
+  }
+  
+  return <MainApp client={client} />;
+}
+```
+
+### React Native with Async Storage
+
+```typescript
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import EzrahECCW, { createEnvConf } from '@coincord/eccw-sdk';
+
+class CredentialManager {
+  private client: EzrahECCW;
+  private cacheKey = 'eccw_credentials_cache';
+  
+  constructor() {
+    this.client = new EzrahECCW(createEnvConf());
+  }
+  
+  async getCachedCredentials(): Promise<Credential[]> {
+    try {
+      const cached = await AsyncStorage.getItem(this.cacheKey);
+      return cached ? JSON.parse(cached) : [];
+    } catch (error) {
+      console.error('Cache read error:', error);
+      return [];
+    }
+  }
+  
+  async refreshCredentials(): Promise<Credential[]> {
+    try {
+      const credentials = await this.client.listCredentials({
+        status: 'active',
+        limit: 100
+      });
+      
+      // Cache the results
+      await AsyncStorage.setItem(this.cacheKey, JSON.stringify(credentials));
+      
+      return credentials;
+    } catch (error) {
+      console.error('Failed to refresh credentials:', error);
+      // Return cached data on network failure
+      return this.getCachedCredentials();
+    }
+  }
+}
+```
+
+## Integration Examples
+
+### Express.js Server Integration
+
+```typescript
+import express from 'express';
+import EzrahECCW, { createEnvConf } from '@coincord/eccw-sdk';
+
+const app = express();
+const eccwClient = new EzrahECCW(createEnvConf());
+
+app.use(express.json());
+
+// Middleware for ECCW authentication
+app.use('/api/protected', async (req, res, next) => {
+  try {
+    const token = req.headers.authorization?.replace('Bearer ', '');
+    if (!token) {
+      return res.status(401).json({ error: 'No token provided' });
+    }
+    
+    // Validate token with ECCW
+    const isValid = await eccwClient.validateToken(token);
+    if (!isValid) {
+      return res.status(401).json({ error: 'Invalid token' });
+    }
+    
+    next();
+  } catch (error) {
+    res.status(500).json({ error: 'Authentication error' });
+  }
+});
+
+// API endpoints
+app.get('/api/protected/credentials', async (req, res) => {
+  try {
+    const credentials = await eccwClient.listCredentials({
+      subject: req.user.did,
+      status: 'active'
+    });
+    
+    res.json({ credentials });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.listen(3000, () => {
+  console.log('Server running on port 3000');
+});
+```
+
+### Next.js API Route
+
+```typescript
+// pages/api/credentials/[id].ts
+import type { NextApiRequest, NextApiResponse } from 'next';
+import EzrahECCW, { createEnvConf } from '@coincord/eccw-sdk';
+
+const client = new EzrahECCW(createEnvConf());
+
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
+  const { id } = req.query;
+  
+  if (typeof id !== 'string') {
+    return res.status(400).json({ error: 'Invalid credential ID' });
+  }
+  
+  try {
+    switch (req.method) {
+      case 'GET':
+        const credential = await client.getCredential(id);
+        res.json({ credential });
+        break;
+        
+      case 'PUT':
+        const updated = await client.updateCredential(id, req.body);
+        res.json({ credential: updated });
+        break;
+        
+      case 'DELETE':
+        await client.deleteCredential(id);
+        res.status(204).end();
+        break;
+        
+      default:
+        res.setHeader('Allow', ['GET', 'PUT', 'DELETE']);
+        res.status(405).end(`Method ${req.method} Not Allowed`);
+    }
+  } catch (error) {
+    console.error('API Error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+}
+```
+
+## Testing Examples
+
+### Unit Testing with Jest
+
+```typescript
+import EzrahECCW, { createEnvConf } from '@coincord/eccw-sdk';
+
+// Mock the SDK for testing
+jest.mock('@coincord/eccw-sdk');
+
+describe('Credential Service', () => {
+  let mockClient: jest.Mocked<EzrahECCW>;
+  
+  beforeEach(() => {
+    mockClient = new EzrahECCW(createEnvConf()) as jest.Mocked<EzrahECCW>;
+  });
+  
+  test('should create credential successfully', async () => {
+    const mockCredential = {
+      id: 'test-123',
+      type: 'IdentityCredential',
+      subject: 'did:example:test',
+      claims: { name: 'Test User' }
+    };
+    
+    mockClient.createCredential.mockResolvedValue(mockCredential);
+    
+    const result = await mockClient.createCredential({
+      type: 'IdentityCredential',
+      subject: 'did:example:test',
+      claims: { name: 'Test User' }
+    });
+    
+    expect(result.id).toBe('test-123');
+    expect(mockClient.createCredential).toHaveBeenCalledTimes(1);
+  });
+  
+  test('should handle credential not found error', async () => {
+    const error = new Error('Credential not found');
+    error.code = 'CREDENTIAL_NOT_FOUND';
+    
+    mockClient.getCredential.mockRejectedValue(error);
+    
+    await expect(mockClient.getCredential('invalid-id')).rejects.toThrow('Credential not found');
+  });
+});
+```
+
+These examples demonstrate the various ways you can integrate and use the ECCW SDK in your applications. Remember to always handle errors appropriately and follow security best practices when working with credentials.
